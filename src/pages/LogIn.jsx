@@ -41,7 +41,7 @@ function Copyright(props) {
       {...props}
     >
       {"Copyright © "}
-      Cycle-on Technologies Inc. 
+      {"Cycle-on Technologies Inc. "}
       {new Date().getFullYear()}
       {"."}
     </Typography>
