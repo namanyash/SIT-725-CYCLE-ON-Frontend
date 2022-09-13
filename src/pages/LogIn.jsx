@@ -1,5 +1,5 @@
 import { Box, Grid, Typography, Paper, Stack } from "@mui/material";
-import React from "react";
+import React, { useState } from "react";
 import theme from "../styles/Theme";
 import Button from "@mui/material/Button";
 import Modal from "@mui/material/Modal";
@@ -14,6 +14,7 @@ import Link from "@mui/material/Link";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
+import axios from "axios";
 
 const style = {
   position: "absolute",
@@ -27,6 +28,10 @@ const style = {
   p: 4,
 };
 
+
+
+
+
 function Copyright(props) {
   return (
     <Typography
@@ -36,7 +41,7 @@ function Copyright(props) {
       {...props}
     >
       {"Copyright © "}
-      Cycle-on Technologies Inc.
+      Cycle-on Technologies Inc. 
       {new Date().getFullYear()}
       {"."}
     </Typography>
@@ -48,13 +53,24 @@ export default function LogIn() {
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
+  const [values, setValues] = useState({
+    username: "", 
+    pass: "",
+    showPass: false,
+  });
+
+
   const handleSubmit = (event) => {
     event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get("email"),
-      password: data.get("password"),
-    });
+    axios.post("http://localhost:5000/api/users/loginUP", {
+			username: values.username,
+			password: values.pass,
+		})
+    .then((res) => {
+			localStorage.setItem("token", res.data.token);
+			navigate("/dashboard");
+		})
+		.catch((err) => console.error(err));
   };
 
   return (
@@ -100,11 +116,12 @@ export default function LogIn() {
                       margin="normal"
                       required
                       fullWidth
-                      id="email"
-                      label="Email Address"
-                      name="email"
-                      autoComplete="email"
+                      id="username"
+                      label="Username"
+                      name="username"
+                      autoComplete="username"
                       autoFocus
+                      onChange={(e) => setValues({ ...values, username: e.target.value })}
                     />
                     <TextField
                       margin="normal"
@@ -115,6 +132,7 @@ export default function LogIn() {
                       type="password"
                       id="password"
                       autoComplete="current-password"
+                      onChange={(e) => setValues({ ...values, pass: e.target.value })}
                     />
                     <FormControlLabel
                       control={<Checkbox value="remember" color="primary" />}
