@@ -10,7 +10,6 @@ function App() {
     <>
       <Header />
       <HomePage />
-      <Wallet />
       <LogIn />
       <Footer />
     </>
