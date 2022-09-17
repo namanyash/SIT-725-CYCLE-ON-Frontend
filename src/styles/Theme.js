@@ -9,13 +9,13 @@ let theme = createTheme({
       light: "#52c7b8",
       main: "#009688",
       dark: "#00675b",
-      contrastText: "#ffff",
+      contrastText: "#ffffff",
     },
     secondary: {
       light: "#ffffff",
       main: "#ffede1",
       dark: "#ccbbaf",
-      contrastText: "#0000",
+      contrastText: "#000000",
     },
   },
   components: {
