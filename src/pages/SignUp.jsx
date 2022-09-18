@@ -42,6 +42,7 @@ export default function SignUp() {
   const [email, setEmail] = React.useState("");
   const [setPassword, setPass] = React.useState("");
   const [confirmPassword, setConfirmPass] = React.useState("");
+  const [passwordMatch, setPasswordMatch] = React.useState(false);
   const [isValid, setValid] = useState(false);
   const [errorConfirmPassword, setErrorConfirmPassword] = useState(false);
 
@@ -70,7 +71,8 @@ export default function SignUp() {
       userName.length &&
       email.length &&
       setPassword &&
-      confirmPassword
+      confirmPassword &&
+      passwordMatch
     );
   };
 
@@ -109,13 +111,22 @@ export default function SignUp() {
     }
     if (id === "setPassword") {
       setPass(value);
+      if (value !== confirmPassword) {
+        setErrorConfirmPassword(true);
+        setPasswordMatch(false);
+      } else {
+        setErrorConfirmPassword(false);
+        setPasswordMatch(true);
+      }
     }
     if (id === "confirmPassword") {
       setConfirmPass(value);
       if (value !== setPassword) {
         setErrorConfirmPassword(true);
+        setPasswordMatch(false);
       } else {
         setErrorConfirmPassword(false);
+        setPasswordMatch(true);
       }
     }
   };
@@ -216,6 +227,9 @@ export default function SignUp() {
                 onChange={(e) => handleInputChange(e)}
                 label="Set Password"
                 variant="outlined"
+                inputProps={{
+                  minLength: 8,
+                }}
               />
             </FormControl>
             <FormControl sx={formcontrolStyle}>
