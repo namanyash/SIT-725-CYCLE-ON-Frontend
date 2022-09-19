@@ -12,6 +12,10 @@ module.exports = {
       template: "./public/index.html",
     }),
   ],
+  devServer: {
+    historyApiFallback: true,
+    hot: true,
+  },
   module: {
     rules: [
       {
