@@ -1,19 +1,21 @@
 import React from "react";
-import Footer from "./components/Footer";
-import Header from "./components/Header";
-import HomePage from "./pages/HomePage";
-import Wallet from "./pages/Wallet";
-import LogIn from "./pages/LogIn";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import { Footer, Header, ProtectedRoutes } from "./components";
+import { LandingPage, Wallet } from "./pages";
 
 function App() {
 
   return (
-    <>
+    <Router>
       <Header />
-      <HomePage />
+      <Routes>
+        <Route path="/" element={<LandingPage />} />
+        <Route element={<ProtectedRoutes />}>
+          <Route path="/wallet" element={<Wallet />} />
+        </Route>
+      </Routes>
       <Footer />
-      <LogIn />
-    </>
+    </Router>
   );
 }
 
