@@ -72,7 +72,7 @@ export default function LogIn() {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    axios.post("http://localhost:5000/api/users/loginUP", {
+    axios.post(`http://localhost:5000/api/users/loginUP`, {
 			username: values.username,
 			password: values.pass,
 		})
@@ -84,7 +84,7 @@ export default function LogIn() {
 		.catch((error) => {
         if (error.response){
           console.log(error.response.data);
-          setMessage("Username and/or Password is Invalid");
+          setMessage(error.response.data.errors[0].msg);
           setError(true);
         }
 

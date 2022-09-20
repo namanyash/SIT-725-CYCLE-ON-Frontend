@@ -6,11 +6,13 @@ import Wallet from "./pages/Wallet";
 import LogIn from "./pages/LogIn";
 
 function App() {
+
   return (
     <>
       <Header />
       <HomePage />
       <Footer />
+      <LogIn />
     </>
   );
 }
