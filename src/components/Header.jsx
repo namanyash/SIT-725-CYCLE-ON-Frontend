@@ -85,7 +85,7 @@ const Header = () => {
               >
                 <MenuIcon />
               </IconButton>
-              <Menu
+              {/* <Menu
                 id="menu-appbar"
                 anchorEl={anchorElNav}
                 anchorOrigin={{
@@ -108,7 +108,7 @@ const Header = () => {
                     <Typography textAlign="center">{page}</Typography>
                   </MenuItem>
                 ))}
-              </Menu>
+              </Menu> */}
             </Box>
             <AdbIcon sx={{ display: { xs: "flex", md: "none" }, mr: 1 }} />
             <Typography
@@ -188,7 +188,7 @@ const Header = () => {
           </Toolbar>
         </Container>
       </AppBar>
-      {openLogin && <LogIn handleClose={handleLoginOpenClose} />
+      {openLogin && <LogIn handleClose={handleLoginOpenClose} />}
     </>
   );
 };

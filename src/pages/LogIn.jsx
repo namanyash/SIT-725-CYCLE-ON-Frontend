@@ -50,10 +50,7 @@ function Copyright(props) {
   );
 }
 
-export default function LogIn() {
-  const [open, setOpen] = React.useState(false);
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
+export default function LogIn({handleClose}) {
 
   const [values, setValues] = useState({
     username: "", 
@@ -79,6 +76,7 @@ console.log(showAlert)
       setMessage("Welcome Back!");
       setAlertType(true);
       setShowAlert(true);
+      handleClose();
 		})
 		.catch((error) => {
         if (error.response){
@@ -92,12 +90,10 @@ console.log(showAlert)
   };
 
   return (
-    <Grid>
-      <Button onClick={handleOpen}>Open modal</Button>
       <Modal
         aria-labelledby="transition-modal-title"
         aria-describedby="transition-modal-description"
-        open={open}
+        open={true}
         onClose={handleClose}
         closeAfterTransition
         BackdropComponent={Backdrop}
@@ -105,7 +101,7 @@ console.log(showAlert)
           timeout: 500,
         }}
       >
-        <Fade in={open}>
+        <Fade in={true}>
           <Box sx={style}>
             <ThemeProvider theme={theme}>
               <Container component="main" maxWidth="xs">
@@ -186,6 +182,5 @@ console.log(showAlert)
           </Box>
         </Fade>
       </Modal>
-    </Grid>
   );
 }
