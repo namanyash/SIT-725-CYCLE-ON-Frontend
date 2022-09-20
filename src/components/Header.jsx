@@ -12,6 +12,7 @@ import Button from "@mui/material/Button";
 import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
 import AdbIcon from "@mui/icons-material/Adb";
+import { LogIn } from "../pages";
 
 const settings = ["Profile", "Logout"];
 
@@ -84,7 +85,7 @@ const Header = () => {
               >
                 <MenuIcon />
               </IconButton>
-              <Menu
+              {/* <Menu
                 id="menu-appbar"
                 anchorEl={anchorElNav}
                 anchorOrigin={{
@@ -107,7 +108,7 @@ const Header = () => {
                     <Typography textAlign="center">{page}</Typography>
                   </MenuItem>
                 ))}
-              </Menu>
+              </Menu> */}
             </Box>
             <AdbIcon sx={{ display: { xs: "flex", md: "none" }, mr: 1 }} />
             <Typography
@@ -187,6 +188,7 @@ const Header = () => {
           </Toolbar>
         </Container>
       </AppBar>
+      {openLogin && <LogIn handleClose={handleLoginOpenClose} />}
     </>
   );
 };

@@ -4,6 +4,7 @@ import { Footer, Header, ProtectedRoutes } from "./components";
 import { LandingPage, Wallet } from "./pages";
 
 function App() {
+
   return (
     <Router>
       <Header />
