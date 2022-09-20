@@ -16,8 +16,7 @@ import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import axios from "axios";
 import Alert from '@mui/material/Alert';
-import InstantMessageFail from '../components/InstantMessageFail';
-import InstantMessageSucc from '../components/InstantMessageSucc';
+import InstantMessage from '../components/InstantMessage';
 
 const style = {
   position: "absolute",
@@ -63,13 +62,12 @@ export default function LogIn() {
   });
 
   
-  const [error, setError] = useState(false); //Controls Alert
+  const [showAlert, setShowAlert] = useState(false); //Controls Alert
   const [message, setMessage] = useState('') //Controls Message
-
-  const [error2, setSucc] = useState(false); //Controls Alert
-  const [message2, setMessageSucc] = useState('') //Controls Message
+  const [alertType, setAlertType] = useState(false) //Controls Message
 
 
+console.log(showAlert)
   const handleSubmit = (event) => {
     event.preventDefault();
     axios.post(`http://localhost:5000/api/users/loginUP`, {
@@ -78,19 +76,19 @@ export default function LogIn() {
 		})
     .then((res) => {
 			localStorage.setItem("token", res.data.token);
-      setMessageSucc("Welcome Back!");
-      setSucc(true);
+      setMessage("Welcome Back!");
+      setAlertType(true);
+      setShowAlert(true);
 		})
 		.catch((error) => {
         if (error.response){
           console.log(error.response.data);
           setMessage(error.response.data.errors[0].msg);
-          setError(true);
+          setAlertType(false);
+          setShowAlert(true);
         }
-
     });
-    setError(false);
-    setSucc(false);
+    setShowAlert(false);
   };
 
   return (
@@ -132,8 +130,7 @@ export default function LogIn() {
                     noValidate
                     sx={{ mt: 1 }}
                   >
-                    {error ?  <InstantMessageFail message = {message} /> : `` }
-                    {error2 ?  <InstantMessageSucc message = {message2} /> : `` }
+                    {showAlert ?  <InstantMessage type={alertType} message = {message} /> : `` }
                     <TextField
                       margin="normal"
                       required
