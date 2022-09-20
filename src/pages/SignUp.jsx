@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import Box from "@mui/material/Box";
 
 import Button from "@mui/material/Button";
+import axios from "axios";
 
 import Typography from "@mui/material/Typography";
 
@@ -50,8 +51,7 @@ const formcontrolStyle = {
   margin: "10px 2px",
 };
 
-export default function SignUp() {
-  const [open, setOpen] = React.useState(false);
+export default function SignUp({handleClose}) {
 
   const [firstName, setFirstName] = React.useState("");
 
@@ -73,10 +73,6 @@ export default function SignUp() {
 
   const [errorConfirmPassword, setErrorConfirmPassword] = useState(false);
 
-  const handleOpen = () => setOpen(true);
-
-  const handleClose = () => setOpen(false);
-
   function handleSubmit(e) {
     e.preventDefault();
 
@@ -91,10 +87,26 @@ export default function SignUp() {
 
       phoneNumber: phoneNumber,
 
-      userName: userName,
+      username: userName,
     };
 
-    console.log("onsubmit", obj);
+    axios
+      .post("http://10.141.25.165:5000/api/users/register", obj)
+      .then((res) => {
+        localStorage.setItem("token", res.data.token);
+        console.log(res.data.token);
+        // setSucc(true);
+        handleClose();
+      })
+      .catch((error) => {
+        if (error.response) {
+          console.log(error.response.data);
+          // setMessage("Username and/or Password is Invalid");
+          // setError(true);
+        }
+      });
+    // setError(false);
+    // setSucc(false);
   }
 
   const validate = () => {
@@ -188,10 +200,9 @@ export default function SignUp() {
 
   return (
     <div>
-      <Button onClick={handleOpen}>Open modal</Button>
 
       <Modal
-        open={open}
+        open={true}
         onClose={handleClose}
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
@@ -246,17 +257,16 @@ export default function SignUp() {
                 label="Phone number"
                 onChange={(e) => handleInputChange(e)}
                 variant="outlined"
-                maxLength={9}
+                maxLength={10}
                 inputProps={{
-                  maxLength: 9,
+                  maxLength: 10,
 
-                  minLength: 9,
+                  minLength: 10,
 
-                  pattern: "[0-9]{9}",
                 }}
               />
 
-              <FormHelperText>Enter your 9 digit mobile number</FormHelperText>
+              <FormHelperText>Enter your 10 digit mobile number</FormHelperText>
             </FormControl>
 
             <FormControl sx={formcontrolStyle}>
