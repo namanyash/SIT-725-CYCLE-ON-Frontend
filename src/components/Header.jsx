@@ -189,7 +189,7 @@ const Header = () => {
         </Container>
       </AppBar>
       {openLogin && <LogIn handleClose={handleLoginOpenClose} />}
-      {openReg && <SignUp handleClose={handleRegisterOpenClose}/>}
+      {openReg && <SignUp handleClose={handleRegisterOpenClose} />}
     </>
   );
 };
