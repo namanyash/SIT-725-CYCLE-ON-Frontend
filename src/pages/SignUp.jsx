@@ -14,6 +14,7 @@ import theme from "../styles/Theme";
 import TextField from "@mui/material/TextField";
 import { FormControl, FormHelperText } from "@mui/material";
 import { Container } from "@mui/system";
+import { postData } from "../../apiConfig";
 
 const boxStyle = {
   position: "absolute",
@@ -51,8 +52,7 @@ const formcontrolStyle = {
   margin: "10px 2px",
 };
 
-export default function SignUp({handleClose}) {
-
+export default function SignUp({ handleClose }) {
   const [firstName, setFirstName] = React.useState("");
 
   const [lastName, setLastName] = React.useState("");
@@ -89,24 +89,23 @@ export default function SignUp({handleClose}) {
 
       username: userName,
     };
+    const request = {
+      url: "/users/register",
+      payload: obj,
+    };
 
-    axios
-      .post("http://10.141.25.165:5000/api/users/register", obj)
-      .then((res) => {
-        localStorage.setItem("token", res.data.token);
-        console.log(res.data.token);
-        // setSucc(true);
+    postData(
+      request,
+      (response) => {
+        localStorage.setItem("token", response.data.token);
         handleClose();
-      })
-      .catch((error) => {
+      },
+      (error) => {
         if (error.response) {
           console.log(error.response.data);
-          // setMessage("Username and/or Password is Invalid");
-          // setError(true);
         }
-      });
-    // setError(false);
-    // setSucc(false);
+      }
+    );
   }
 
   const validate = () => {
@@ -200,7 +199,6 @@ export default function SignUp({handleClose}) {
 
   return (
     <div>
-
       <Modal
         open={true}
         onClose={handleClose}
@@ -262,7 +260,6 @@ export default function SignUp({handleClose}) {
                   maxLength: 10,
 
                   minLength: 10,
-
                 }}
               />
 
