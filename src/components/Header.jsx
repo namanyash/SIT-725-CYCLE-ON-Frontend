@@ -12,7 +12,7 @@ import Button from "@mui/material/Button";
 import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
 import AdbIcon from "@mui/icons-material/Adb";
-import { LogIn } from "../pages";
+import { LogIn, SignUp } from "../pages";
 
 const settings = ["Profile", "Logout"];
 
@@ -184,6 +184,7 @@ const Header = () => {
         </Container>
       </AppBar>
       {openLogin && <LogIn handleClose={handleLoginOpenClose} />}
+      {openReg && <SignUp handleClose={handleRegisterOpenClose} />}
     </>
   );
 };

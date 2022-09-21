@@ -7,6 +7,7 @@ import Cycling from "../assets/cycling_quote.jpg";
 
 function HomePage() {
   return (
+    <>
     <Box>
       <Paper
         sx={{
@@ -127,6 +128,7 @@ function HomePage() {
         </Paper>
       </Paper>
     </Box>
+    </>
   );
 }
 
