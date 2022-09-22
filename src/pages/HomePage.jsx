@@ -5,142 +5,14 @@ import {
   Marker,
   DirectionsRenderer,
 } from "@react-google-maps/api";
-import {
-  Box,
-  Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  Grid,
-  IconButton,
-  Paper,
-  Skeleton,
-  Stack,
-  TextField,
-  Typography,
-  useMediaQuery,
-  useTheme,
-} from "@mui/material";
+import { Box, Skeleton, useTheme } from "@mui/material";
 import { useMemo } from "react";
-import { PlacesAutocomplete } from "../components";
+import { BookRideComponent, PlacesAutocomplete } from "../components";
 import { useEffect } from "react";
-import axios from "axios";
-import { Close } from "@mui/icons-material";
 import { stringToLatLngObject } from "../../utils";
+import { getData, putData } from "../../apiConfig";
 
 const libraries = ["places"];
-
-function StationInfoComponent({
-  open,
-  handleClose,
-  stationData,
-  stations,
-  setDirectionsResponse,
-}) {
-  const theme = useTheme();
-  const fullScreen = useMediaQuery(theme.breakpoints.down("md"));
-
-  const [originData, setOriginData] = useState(stationData);
-  const [destinationData, setDestinationData] = useState(undefined);
-  const n_Bikes = stationData.bikes.length;
-
-  const [directions, setDirections] = useState("");
-  console.log(directions);
-
-  const calculateRoute = async () => {
-    // Calculating the routes
-    const directionsService = new google.maps.DirectionsService();
-    const results = await directionsService.route(
-      {
-        origin: stringToLatLngObject(originData.coordinates),
-        destination: stringToLatLngObject(destinationData.coordinates),
-        travelMode: google.maps.TravelMode.BICYCLING,
-      },
-      (result, status) => {
-        if (status === "OK" && result) {
-          setDirectionsResponse(result);
-          setDirections(result.routes[0].legs[0]);
-        }
-      }
-    );
-  };
-
-  useEffect(() => {
-    if (originData && destinationData) {
-      calculateRoute();
-    }
-  }, [originData, destinationData]);
-
-  const handleSelect = (val) => {
-    setDestinationData(val);
-  };
-  return (
-    <Dialog
-      fullScreen={fullScreen}
-      open={open}
-      onClose={handleClose}
-      maxWidth="sm"
-      fullWidth={true}
-    >
-      <DialogContent>
-        <Stack spacing={1}>
-          <Box
-            sx={{
-              display: "flex",
-              alignItems: "center",
-            }}
-          >
-            <Box
-              sx={{
-                flexGrow: 1,
-              }}
-            >
-              <Typography variant="h4" fontWeight="bold" gutterBottom>
-                Start Your Journey
-              </Typography>
-            </Box>
-            <IconButton onClick={handleClose}>
-              <Close />
-            </IconButton>
-          </Box>
-          <Typography variant="h6" fontWeight="bold" gutterBottom>
-            {n_Bikes > 0
-              ? `Number of Bikes Available: ${n_Bikes}`
-              : "Currently No Bikes Available.."}
-          </Typography>
-          <TextField
-            label="Start Location"
-            value={originData.locationName}
-          ></TextField>
-          <PlacesAutocomplete
-            options={stations.filter(
-              (station) => station._id != originData._id
-            )}
-            disabled={!Boolean(n_Bikes)}
-            handleSelect={handleSelect}
-          />
-          {directions && (
-            <Box>
-              <Grid container justifyContent="space-between">
-                <Grid item xs={6}>
-                  <Typography>Distance: {directions.distance.text}</Typography>
-                </Grid>
-                <Grid item xs={6}>
-                  <Typography>Duration: {directions.duration.text}</Typography>
-                </Grid>
-              </Grid>
-            </Box>
-          )}
-        </Stack>
-      </DialogContent>
-      <DialogActions>
-        <Button variant="text" disabled={!Boolean(n_Bikes)}>
-          Book a ride
-        </Button>
-      </DialogActions>
-    </Dialog>
-  );
-}
 
 function HomePage() {
   const theme = useTheme();
@@ -155,6 +27,7 @@ function HomePage() {
   const [openStationModal, setOpenStationModal] = useState(false);
 
   const [directionsResponse, setDirectionsResponse] = useState(null);
+  const [isBooked, setIsBooked] = useState(false);
 
   const center = useMemo(
     () => ({
@@ -174,30 +47,20 @@ function HomePage() {
     setMap(null);
   }, []);
 
-  // const handleCenterLocation = (loc) => {
-  //   setCenterLocation(loc);
-  //   map.panTo(loc);
-  // };
-
   useEffect(() => {
     if (isLoaded) {
-      const header = {
-        headers: {
-          "X-Auth-Token":
-            "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjMyNjQzMzVlMmEwZTQyYzFjYTRhNWFhIn0sImlhdCI6MTY2Mzc1NDI2NiwiZXhwIjoxNjYzNzU3ODY2fQ.G2UCAxP3x80UHBI6N_61kIkfX5SzXLvTJwrPZcpPvic",
-          "content-type": "application/json",
-        },
+      const request = {
+        url: "/locations/getLocation",
       };
-      axios
-        .get(`http://localhost:5000/api/locations/getLocation`, header)
-        .then((res) => {
-          setStations(res.data);
-        })
-        .catch((error) => {
-          if (error.response) {
-            console.log(error.response.data);
-          }
-        });
+      getData(
+        request,
+        (response) => {
+          setStations(response.data);
+        },
+        (error) => {
+          console.log(error);
+        }
+      );
     }
   }, [isLoaded]);
 
@@ -206,7 +69,10 @@ function HomePage() {
     setCurrentStation(station);
   };
 
-  const handleStationModalClose = () => {
+  const handleStationModalClose = (val) => {
+    if (val == "done") {
+      setIsBooked(true);
+    }
     setOpenStationModal(false);
   };
 
@@ -245,27 +111,27 @@ function HomePage() {
                       fillColor: theme.palette.primary.main,
                       fillOpacity: 0.6,
                       scale: 1.5,
-                      strokeColor: theme.palette.primary.main,
                     }}
                     onClick={(e) => handleStationClick(e, station)}
                   />
                 );
               })}
 
-            {directionsResponse && (
+            {directionsResponse && isBooked && (
               <DirectionsRenderer
                 directions={directionsResponse}
                 options={{
                   polylineOptions: {
                     zIndex: 50,
-                    strokeWeight: 5,
+                    strokeWeight: 7,
+                    strokeColor: theme.palette.info.light,
                   },
                 }}
               />
             )}
           </GoogleMap>
           {openStationModal && (
-            <StationInfoComponent
+            <BookRideComponent
               open={openStationModal}
               handleClose={handleStationModalClose}
               stationData={currentStation}

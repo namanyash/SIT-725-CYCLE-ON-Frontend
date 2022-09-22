@@ -20,7 +20,7 @@ export default function PlacesAutocomplete({
       renderInput={(params) => (
         <TextField
           {...params}
-          label="Select Destination"
+          label="Choose Destination"
           InputProps={{
             ...params.InputProps,
             type: "search",
