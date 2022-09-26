@@ -11,6 +11,7 @@ import Button from "@mui/material/Button";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 
+//wallet function 
 export default function WalletPage() {
   const [values, setValues] = React.useState({
     amount: "",
@@ -24,6 +25,7 @@ export default function WalletPage() {
     setValues({ ...values, [prop]: event.target.value });
   };
 
+  // front end form
   return (
     <Box m={5} pt={4} align="center">
           <Grid container alignItems="center">

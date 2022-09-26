@@ -46,7 +46,7 @@ function Copyright(props) {
     </Typography>
   );
 }
-
+//login function
 export default function LogIn({ handleClose }) {
   const [values, setValues] = useState({
     username: "",
@@ -57,7 +57,7 @@ export default function LogIn({ handleClose }) {
   const [showAlert, setShowAlert] = useState(false); //Controls Alert
   const [message, setMessage] = useState(""); //Controls Message
   const [alertType, setAlertType] = useState(false); //Controls Message
-
+//connects to backend loginUP API 
   console.log(showAlert);
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -71,6 +71,8 @@ export default function LogIn({ handleClose }) {
     postData(
       request,
       (response) => {
+        //if login is without error, received token from backend and stores in local storage
+        //presents snackbox alert
         localStorage.setItem("token", response.data.token);
         setMessage("Welcome Back!");
         setAlertType(true);
@@ -79,9 +81,9 @@ export default function LogIn({ handleClose }) {
       },
       (error) => {
         if (error.response) {
-          console.log(error.response.data);
-          setMessage(error.response.data.errors[0].msg);
-          setAlertType(false);
+          console.log(error.response.data); 
+          setMessage(error.response.data.errors[0].msg); //displays error message retrived from backend
+          setAlertType(false); //snackboc popup
           setShowAlert(true);
         }
       }
@@ -89,6 +91,7 @@ export default function LogIn({ handleClose }) {
     setShowAlert(false);
   };
 
+  //pop up modal and form
   return (
     <Modal
       aria-labelledby="transition-modal-title"
@@ -140,6 +143,7 @@ export default function LogIn({ handleClose }) {
                     name="username"
                     autoComplete="username"
                     autoFocus
+                    //sends the username entered value to backend
                     onChange={(e) =>
                       setValues({ ...values, username: e.target.value })
                     }
@@ -153,6 +157,7 @@ export default function LogIn({ handleClose }) {
                     type="password"
                     id="password"
                     autoComplete="current-password"
+                    //sends the password entered value to backend
                     onChange={(e) =>
                       setValues({ ...values, pass: e.target.value })
                     }
