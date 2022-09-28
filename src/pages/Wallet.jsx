@@ -10,45 +10,85 @@ import Checkbox from "@mui/material/Checkbox";
 import Button from "@mui/material/Button";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
+import { InstantMessage } from "../components";
 
 export default function WalletPage() {
-  const [values, setValues] = React.useState({
-    amount: "",
-    password: "",
-    weight: "",
-    weightRange: "",
-    showPassword: false,
+  const [amount, setAmount] = React.useState();
+  const [message, setMessage] = React.useState({
+    value: "",
+    type: "",
   });
-
-  const handleChange = (prop) => (event) => {
-    setValues({ ...values, [prop]: event.target.value });
+  const handleAmountChange = (event) => {
+    setAmount(event.target.value);
+  };
+  const handlePurchase = (event) => {
+    const request = {
+      url: "/users/addBalance",
+      payload: {
+        valueToAdd: amount,
+      },
+      headers: {
+        //todo
+        "x-api-token": "",
+      },
+    };
+    postData(
+      request,
+      (response) => {
+        setMessage({
+          value: "success",
+          type: true,
+        });
+      },
+      (error) => {
+        if (error.response) {
+          console.log(error.response.data);
+          setMessage({
+            //todo
+            value: error.response.data,
+            type: false,
+          });
+        }
+      }
+    );
   };
 
   return (
-    <Box m={5} pt={4} align="center">
-          <Grid container alignItems="center">
-            <Grid item xs={12} md={5}>
-              <Box mx={2}>
-                <Typography variant="h3" fontWeight={900}>
-                  Top Up Your Wallet
-                </Typography>
-                <Typography variant="h6" fontWeight={400}>
-                  Use the form below to add to your wallet, so you're ready to
-                  ride!
-                </Typography>
-              </Box>
-            </Grid>
-          </Grid>
-
-
-      <Grid container>
+    <Box
+      m={5}
+      pt={4}
+      display="flex"
+      flexDirection="column"
+      justifyContent="space-between"
+      alignItems="space-between"
+      minHeight="78vh"
+    >
+      <Grid
+        container
+        flexDirection="row"
+        alignItems="center"
+        justifyContent="center"
+      >
+        <Grid item xs={12} md={5}>
+          <Box mx={2}>
+            <Typography variant="h3" fontWeight={900}>
+              Top Up Your Wallet
+            </Typography>
+            <Typography variant="h6" fontWeight={400}>
+              Use the form below to add to your wallet, so you're ready to ride!
+            </Typography>
+          </Box>
+        </Grid>
         <Box pb={3} pt={3} align="center">
-          <Card sx={{ minWidth: 275,
-                          marginTop: 8,
-                              display: "flex",
-                              flexDirection: "column",
-                              alignItems: "center",
-                          }}>
+          <Card
+            sx={{
+              minWidth: 275,
+              marginTop: 8,
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+            }}
+          >
             <CardContent>
               <Typography variant="h6" component="div">
                 Current Balance
@@ -66,37 +106,9 @@ export default function WalletPage() {
         </Box>
       </Grid>
 
-      <Grid container alignItems="center">
-        <Grid item xs={12} md={5}>
-          <Box pb={5} pt={5}>
-            <Paper
-              sx={{
-                my: 1,
-              }}
-              elevation={0}
-              square
-            >
-              <React.Fragment>
-                <FormControl fullWidth sx={{ m: 1 }} variant="standard">
-                  <InputLabel htmlFor="standard-adornment-amount">
-                    Amount
-                  </InputLabel>
-                  <Input
-                    id="standard-adornment-amount"
-                    value={values.amount}
-                    onChange={handleChange("amount")}
-                    startAdornment={
-                      <InputAdornment position="start">$</InputAdornment>
-                    }
-                  />
-                </FormControl>
-              </React.Fragment>
-            </Paper>
-          </Box>
-        </Grid>
-      </Grid>
+      <Grid container flexDirection="column" alignItems="center"></Grid>
 
-      <Grid container alignItems="center">
+      <Grid container flexDirection="column" alignItems="center">
         <Grid item xs={12} md={5}>
           <Paper
             sx={{
@@ -151,27 +163,56 @@ export default function WalletPage() {
                     variant="standard"
                   />
                 </Grid>
-                <Grid item xs={12}>
-                  <FormControlLabel
-                    control={
-                      <Checkbox color="secondary" name="saveCard" value="yes" />
-                    }
-                    label="Remember credit card details for next time"
-                  />
-                </Grid>
               </Grid>
             </React.Fragment>
           </Paper>
         </Grid>
       </Grid>
 
-      <Grid container alignItems="center">
+      <Grid
+        container
+        flexDirection="row"
+        justifyContent="space-around"
+        alignItems="space-around"
+      >
         <Grid item xs={12} md={5}>
+          <Box pb={5} pt={5}>
+            <Paper
+              sx={{
+                my: 1,
+              }}
+              elevation={0}
+              square
+            >
+              <React.Fragment>
+                <FormControl fullWidth sx={{ m: 1 }} variant="standard">
+                  <InputLabel htmlFor="standard-adornment-amount">
+                    Amount
+                  </InputLabel>
+                  <Input
+                    id="standard-adornment-amount"
+                    value={amount}
+                    onChange={handleAmountChange}
+                    startAdornment={
+                      <InputAdornment position="start">$</InputAdornment>
+                    }
+                  />
+                </FormControl>
+              </React.Fragment>
+            </Paper>
+          </Box>
+        </Grid>
+        <Grid item xs={12} md={1}>
           <Box pb={10} pt={10}>
-            <Button variant="contained">Purchase!</Button>
+            <Button variant="contained" onClick={handlePurchase}>
+              Purchase!
+            </Button>
           </Box>
         </Grid>
       </Grid>
+      {message.value.length > 0 ? (
+        <InstantMessage type={message.type} message={message.value} />
+      ) : null}
     </Box>
   );
 }
