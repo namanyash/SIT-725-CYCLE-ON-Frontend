@@ -83,7 +83,7 @@ export default function LogIn({ handleClose }) {
         if (error.response) {
           console.log(error.response.data); 
           setMessage(error.response.data.errors[0].msg); //displays error message retrived from backend
-          setAlertType(false); //snackboc popup
+          setAlertType(false); //snackbox popup
           setShowAlert(true);
         }
       }
