@@ -11,7 +11,7 @@ import Button from "@mui/material/Button";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 
-//wallet function 
+//wallet function, sets values to nothing 
 export default function WalletPage() {
   const [values, setValues] = React.useState({
     amount: "",
@@ -44,15 +44,15 @@ export default function WalletPage() {
 
 
       <Grid container>
-        <Box pb={3} pt={3} align="center">
+      
           <Card sx={{ minWidth: 275,
                           marginTop: 8,
                               display: "flex",
                               flexDirection: "column",
-                              alignItems: "center",
+                              align: "center",
                           }}>
             <CardContent>
-              <Typography variant="h6" component="div">
+              <Typography variant="h6">
                 Current Balance
               </Typography>
               <Typography
@@ -65,7 +65,7 @@ export default function WalletPage() {
               <Typography variant="body10">$</Typography>
             </CardContent>
           </Card>
-        </Box>
+        
       </Grid>
 
       <Grid container alignItems="center">

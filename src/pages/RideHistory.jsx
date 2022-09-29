@@ -32,21 +32,7 @@ const bull = (
   </Box>
 );
 
-function Copyright(props) {
-  return (
-    <Typography
-      variant="body2"
-      color="text.secondary"
-      align="center"
-      {...props}
-    >
-      {"Copyright © "}
-      {"Cycle-on Technologies Inc. "}
-      {new Date().getFullYear()}
-      {"."}
-    </Typography>
-  );
-}
+
 
 export default function RideHistory({ handleClose }) {
   //Ride history cards are displayed here
@@ -56,6 +42,7 @@ export default function RideHistory({ handleClose }) {
         component="h1"
         variant="h4"
         sx={{
+          marginBottom: 6,
           marginBottom: 6,
           display: "flex",
           flexDirection: "column",
