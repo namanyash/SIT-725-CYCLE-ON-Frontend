@@ -1,7 +1,8 @@
 import React from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import { Footer, Header, ProtectedRoutes } from "./components";
-import { LandingPage, Wallet, HomePage } from "./pages";
+import { LandingPage, Wallet, HomePage, RideHistory } from "./pages";
+
 
 function App() {
 
@@ -13,6 +14,7 @@ function App() {
         <Route path="/home" element={<HomePage />} />
         <Route element={<ProtectedRoutes />}>
           <Route path="/wallet" element={<Wallet />} />
+          <Route path="/previousRides" element={<RideHistory />} />
         </Route>
       </Routes>
       <Footer />

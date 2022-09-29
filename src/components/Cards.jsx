@@ -7,24 +7,17 @@ import CardActions from "@mui/material/CardActions";
 import CardContent from "@mui/material/CardContent";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import MoreVertIcon from '@mui/icons-material/MoreVert';
+import Collapse from '@mui/material/Collapse';
+import Avatar from '@mui/material/Avatar';
+
 
 const Cards = (props) => {
   return (
-    <div className="card">
-      <Card sx={{ minWidth: 275 }}>
+    <Box>
+      <Card variant="outlined" sx={{ maxWidth: 350,  margin: 2 }}>
         <CardContent>
-          <Typography
-            component="h1"
-            variant="h4"
-            sx={{
-              marginBottom: 6,
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-            }}
-          >
-            Ride History
-          </Typography>
           <Typography
             variant="h6"
             component="div"
@@ -132,7 +125,8 @@ const Cards = (props) => {
           </Typography>
         </CardContent>
       </Card>
-    </div>
+      </Box>
+
   );
 };
 

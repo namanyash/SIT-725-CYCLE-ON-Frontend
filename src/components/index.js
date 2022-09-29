@@ -4,6 +4,7 @@ import ProtectedRoutes from "./ProtectedRoutes";
 import PlacesAutocomplete from "./PlacesAutocomplete";
 import InstantMessage from "./InstantMessage";
 import BookRideComponent from "./BookRideComponent";
+import Cards from "./Cards";
 
 export {
   Footer,
@@ -12,4 +13,5 @@ export {
   PlacesAutocomplete,
   InstantMessage,
   BookRideComponent,
+  Cards,
 };

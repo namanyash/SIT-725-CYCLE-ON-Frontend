@@ -49,48 +49,39 @@ function Copyright(props) {
 }
 
 export default function RideHistory({ handleClose }) {
-  //pop up modal and form
+  //Ride history cards are displayed here
   return (
-    <Modal
-      aria-labelledby="transition-modal-title"
-      aria-describedby="transition-modal-description"
-      open={true}
-      onClose={handleClose}
-      closeAfterTransition
-      BackdropComponent={Backdrop}
-      BackdropProps={{
-        timeout: 500,
-      }}
-    >
-      <Fade in={true}>
-        <Box sx={style}>
-          <ThemeProvider theme={theme}>
-            <Container component="main" maxWidth="xs">
-              <CssBaseline />
-              <Box
-                sx={{
-                  marginTop: 8,
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "center",
-                }}
-              >
+    <div className="wrapper">
+      <Typography
+        component="h1"
+        variant="h4"
+        sx={{
+          marginBottom: 6,
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+        }}
+      >
+        Ride History
+      </Typography>
 
-                <div className="wrapper">
-                  <Cards
-                    starttime="The Everyday Salad"
-                    startlocation="Test"
-                    bikename="Test"
-                    endtime="Test"
-                    endlocation="Test"
-                  />
-                </div>
-              </Box>
-              <Copyright sx={{ mt: 8, mb: 4 }} />
-            </Container>
-          </ThemeProvider>
-        </Box>
-      </Fade>
-    </Modal>
+      <div style={{ display: "flex", flexWrap: "wrap" }}>
+
+      <Cards
+        starttime="The Everyday Salad"
+        startlocation="Test"
+        bikename="Test"
+        endtime="Test"
+        endlocation="Test"
+      />
+      <Cards
+        starttime="The Everyday Salad"
+        startlocation="Test"
+        bikename="Test"
+        endtime="Test"
+        endlocation="Test"
+      />
+      </div>
+    </div>
   );
 }
