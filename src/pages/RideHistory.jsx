@@ -1,14 +1,5 @@
 import { Box, Grid, Typography, Paper, Stack } from "@mui/material";
 import React, { useState } from "react";
-import theme from "../styles/Theme";
-import Button from "@mui/material/Button";
-import Modal from "@mui/material/Modal";
-import Backdrop from "@mui/material/Backdrop";
-import Fade from "@mui/material/Fade";
-import CssBaseline from "@mui/material/CssBaseline";
-import Container from "@mui/material/Container";
-import { createTheme, ThemeProvider } from "@mui/material/styles";
-import { getData, postData } from "../../apiConfig";
 import Cards from "../components/Cards";
 
 const style = {
@@ -34,7 +25,7 @@ const bull = (
 
 
 
-export default function RideHistory({ handleClose }) {
+export default function RideHistory() {
   //Ride history cards are displayed here
   return (
     <div className="wrapper">
@@ -43,7 +34,7 @@ export default function RideHistory({ handleClose }) {
         variant="h4"
         sx={{
           marginBottom: 6,
-          marginBottom: 6,
+          marginTop: 6,
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
