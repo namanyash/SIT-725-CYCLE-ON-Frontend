@@ -13,11 +13,13 @@ import Checkbox from "@mui/material/Checkbox";
 import Link from "@mui/material/Link";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Container from "@mui/material/Container";
-import { createTheme, ThemeProvider } from "@mui/material/styles";
-import axios from "axios";
-import Alert from "@mui/material/Alert";
+import { ThemeProvider } from "@mui/material/styles";
 import InstantMessage from "../components/InstantMessage";
 import { getData, postData } from "../../apiConfig";
+import { isLoggedIn } from "../redux/slices/authSlice";
+import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { HOME_ROUTE } from "../../utils";
 
 const style = {
   position: "absolute",
@@ -57,6 +59,8 @@ export default function LogIn({ handleClose }) {
   const [showAlert, setShowAlert] = useState(false); //Controls Alert
   const [message, setMessage] = useState(""); //Controls Message
   const [alertType, setAlertType] = useState(false); //Controls Message
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   console.log(showAlert);
   const handleSubmit = (event) => {
@@ -71,7 +75,9 @@ export default function LogIn({ handleClose }) {
     postData(
       request,
       (response) => {
-        localStorage.setItem("token", response.data.token);
+        localStorage.setItem("token", JSON.stringify(response.data.token));
+        dispatch(isLoggedIn(true));
+        navigate(HOME_ROUTE);
         setMessage("Welcome Back!");
         setAlertType(true);
         setShowAlert(true);

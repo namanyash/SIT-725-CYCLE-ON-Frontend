@@ -11,11 +11,13 @@ function Footer() {
         color: theme.palette.primary.contrastText,
       }}
     >
-      <Grid container alignContent="center">
-        <Grid item xs={12} md={4}>
-          <Typography>&copy; 2022 Cycle-on Technologies Inc.</Typography>
+      <Grid container spacing={1} justifyContent="space-between">
+        <Grid item xs={12} md="auto">
+          <Typography textAlign="center">
+            &copy; 2022 Cycle-on Technologies Inc.
+          </Typography>
         </Grid>
-        <Grid item xs={12} md={4}>
+        <Grid item xs={12} md="auto">
           <Box
             sx={{
               display: "flex",
@@ -29,21 +31,14 @@ function Footer() {
             </Stack>
           </Box>
         </Grid>
-        <Grid item xs={12} md={4}>
-          <Box
-            sx={{
-              display: "flex",
-              justifyContent: "flex-end",
-            }}
-          >
-            <Stack spacing={3} direction="row">
-              <Link href="#" color={theme.palette.primary.contrastText}>
-                Privacy Policy
-              </Link>
-              <Link href="#">FAQs</Link>
-              <Link href="#">Terms and Conditions</Link>
-            </Stack>
-          </Box>
+        <Grid item container xs={12} md="auto" justifyContent="center">
+          <Stack spacing={3} direction="row">
+            <Link href="#" color={theme.palette.primary.contrastText}>
+              Privacy Policy
+            </Link>
+            <Link href="#">FAQs</Link>
+            <Link href="#">Terms and Conditions</Link>
+          </Stack>
         </Grid>
       </Grid>
     </Toolbar>
