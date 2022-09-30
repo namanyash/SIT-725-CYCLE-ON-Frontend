@@ -4,7 +4,7 @@ const BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
 const options = {
   headers: {
-    "X-Auth-Token": localStorage.getItem("token"),
+    "X-Auth-Token": JSON.parse(localStorage.getItem("token")),
   },
 };
 
@@ -44,4 +44,4 @@ function putData(request, response, error) {
     });
 }
 
-export { getData, postData, putData };
+export { getData, postData, putData, BASE_URL };
