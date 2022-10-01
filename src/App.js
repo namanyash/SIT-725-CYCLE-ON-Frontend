@@ -1,3 +1,4 @@
+import axios from "axios";
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
@@ -17,11 +18,22 @@ function App() {
   const dispatch = useDispatch();
   const isAuth = useSelector((state) => state[AUTH_REDUCER]);
 
+  axios.interceptors.request.use(
+    function (config) {
+      // Do something before request is sent
+      config.headers["X-Auth-Token"] = localStorage.getItem("token");
+      return config;
+    },
+    function (error) {
+      // Do something with request error
+      return Promise.reject(error);
+    }
+  );
+
   const checkTokenExpiration = () => {
     // To check if token is expired or not and dispatch auth state
     const token =
-      JSON.parse(localStorage.getItem("token")) &&
-      JSON.parse(localStorage.getItem("token"));
+      localStorage.getItem("token") && localStorage.getItem("token");
     if (token) {
       if (parseJwt(token).exp < Date.now() / 1000) {
         localStorage.clear();

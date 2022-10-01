@@ -75,7 +75,7 @@ export default function LogIn({ handleClose }) {
     postData(
       request,
       (response) => {
-        localStorage.setItem("token", JSON.stringify(response.data.token));
+        localStorage.setItem("token", response.data.token);
         dispatch(isLoggedIn(true));
         navigate(HOME_ROUTE);
         setMessage("Welcome Back!");
