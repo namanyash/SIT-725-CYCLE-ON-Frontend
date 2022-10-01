@@ -97,7 +97,7 @@ export default function SignUp({ handleClose }) {
     postData(
       request,
       (response) => {
-        localStorage.setItem("token", JSON.stringify(response.data.token));
+        localStorage.setItem("token", response.data.token);
         handleClose();
       },
       (error) => {
