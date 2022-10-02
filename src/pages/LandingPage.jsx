@@ -12,6 +12,7 @@ import Cycling from "../assets/cycling_quote.jpg";
 import { useSelector } from "react-redux";
 import { AUTH_REDUCER, HOME_ROUTE } from "../../utils";
 import { useNavigate } from "react-router-dom";
+import { CurrentRide } from "../components";
 
 function HomePage() {
   const isAuth = useSelector((state) => state[AUTH_REDUCER]);
@@ -152,6 +153,7 @@ function HomePage() {
           </Paper>
         </Paper>
       </Box>
+      <CurrentRide />
     </>
   );
 }
