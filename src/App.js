@@ -10,7 +10,7 @@ import {
   WALLET_ROUTE,
 } from "../utils";
 import { Footer, Header, ProtectedRoutes } from "./components";
-import { LandingPage, Wallet, HomePage } from "./pages";
+import { LandingPage, Wallet, HomePage, RideHistory } from "./pages";
 import { isLoggedIn } from "./redux/slices/authSlice";
 import { getUser } from "./redux/slices/userSlice";
 
