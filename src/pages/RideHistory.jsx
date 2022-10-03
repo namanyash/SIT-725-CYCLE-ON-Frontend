@@ -1,18 +1,9 @@
 import { Box, Grid, Typography, Paper, Stack } from "@mui/material";
 import React, { useState } from "react";
+import { useEffect } from "react";
+import { useSelector } from "react-redux";
+import { USER_REDUCER } from "../../utils";
 import Cards from "../components/Cards";
-
-const style = {
-  position: "absolute",
-  top: "50%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
-  width: 400,
-  bgcolor: "background.paper",
-  border: "2px solid #000",
-  boxShadow: 24,
-  p: 4,
-};
 
 const bull = (
   <Box
@@ -23,43 +14,48 @@ const bull = (
   </Box>
 );
 
-
-
 export default function RideHistory() {
+  const userData = useSelector((state) => state[USER_REDUCER]);
+  const [rideHistory, setRideHistory] = useState(null);
+
+  useEffect(() => {
+    if (userData) {
+      setRideHistory(userData.rideHistory);
+    }
+  }, [userData]);
+
   //Ride history cards are displayed here
   return (
-    <div className="wrapper">
-      <Typography
-        component="h1"
-        variant="h4"
-        sx={{
-          marginBottom: 6,
-          marginTop: 6,
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-        }}
-      >
-        Ride History
-      </Typography>
+    rideHistory && (
+      <div className="wrapper">
+        <Typography
+          component="h1"
+          variant="h4"
+          sx={{
+            marginBottom: 6,
+            marginTop: 6,
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+          }}
+        >
+          Ride History
+        </Typography>
 
-      <div style={{ display: "flex", flexWrap: "wrap" }}>
-
-      <Cards
-        starttime="The Everyday Salad"
-        startlocation="Test"
-        bikename="Test"
-        endtime="Test"
-        endlocation="Test"
-      />
-      <Cards
-        starttime="The Everyday Salad"
-        startlocation="Test"
-        bikename="Test"
-        endtime="Test"
-        endlocation="Test"
-      />
+        <Grid container>
+          {rideHistory.map((item, index) => (
+            <Grid item key={index} xs={4}>
+              <Cards
+                startTime={item.startTime}
+                startLocation={item.startLocation}
+                bikeName={item.bikeName}
+                endTime={item.endTime}
+                endLocation={item.endLocation}
+              />
+            </Grid>
+          ))}
+        </Grid>
       </div>
-    </div>
+    )
   );
 }

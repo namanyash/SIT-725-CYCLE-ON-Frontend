@@ -7,6 +7,7 @@ import {
   HOME_ROUTE,
   LANDING_ROUTE,
   parseJwt,
+  PREV_RIDES_ROUTE,
   WALLET_ROUTE,
 } from "../utils";
 import { Footer, Header, ProtectedRoutes } from "./components";
@@ -59,6 +60,7 @@ function App() {
           <Route element={<ProtectedRoutes />}>
             <Route path={WALLET_ROUTE} element={<Wallet />} />
             <Route path={HOME_ROUTE} element={<HomePage />} />
+            <Route path={PREV_RIDES_ROUTE} element={<RideHistory />} />
           </Route>
         </Routes>
         <Footer />
