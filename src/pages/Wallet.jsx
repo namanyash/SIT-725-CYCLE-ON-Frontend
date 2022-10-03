@@ -9,13 +9,25 @@ import Button from "@mui/material/Button";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import { InstantMessage } from "../components";
+import { useSelector } from "react-redux";
+import { USER_REDUCER } from "../../utils";
+import { useEffect } from "react";
 
 export default function WalletPage() {
-  const [amount, setAmount] = React.useState();
+  const [amount, setAmount] = React.useState(null);
   const [message, setMessage] = React.useState({
     value: "",
     type: "",
   });
+  const [currentBalance, setCurrentBalance] = React.useState(null);
+  const userData = useSelector((state) => state[USER_REDUCER]);
+
+  useEffect(() => {
+    if (userData) {
+      setCurrentBalance(userData.balance.toFixed(2));
+    }
+  }, [userData]);
+
   const handleAmountChange = (event) => {
     setAmount(event.target.value);
   };
@@ -98,7 +110,7 @@ export default function WalletPage() {
               >
                 Prices in AUD
               </Typography>
-              <Typography variant="body10">$</Typography>
+              <Typography variant="body10">${currentBalance}</Typography>
             </CardContent>
           </Card>
         </Box>
@@ -189,7 +201,6 @@ export default function WalletPage() {
                   </InputLabel>
                   <Input
                     id="standard-adornment-amount"
-                    value={amount}
                     onChange={handleAmountChange}
                     startAdornment={
                       <InputAdornment position="start">$</InputAdornment>
