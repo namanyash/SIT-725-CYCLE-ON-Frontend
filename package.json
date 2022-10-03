@@ -24,11 +24,15 @@
     "@mui/icons-material": "^5.10.3",
     "@mui/material": "^5.10.3",
     "@react-google-maps/api": "^2.12.2",
+    "@reduxjs/toolkit": "^1.8.5",
     "axios": "^0.27.2",
     "dotenv": "^16.0.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-router-dom": "^6.3.0"
+    "react-redux": "^8.0.4",
+    "react-router-dom": "^6.3.0",
+    "redux": "^4.2.0",
+    "redux-saga": "^1.2.1"
   },
   "devDependencies": {
     "@babel/core": "^7.18.13",
