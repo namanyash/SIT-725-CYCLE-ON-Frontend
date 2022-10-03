@@ -75,6 +75,8 @@ export default function LogIn({ handleClose }) {
     postData(
       request,
       (response) => {
+        //if login is without error, received token from backend and stores in local storage
+        //presents snackbox alert
         localStorage.setItem("token", response.data.token);
         dispatch(isLoggedIn(true));
         navigate(HOME_ROUTE);
@@ -86,8 +88,8 @@ export default function LogIn({ handleClose }) {
       (error) => {
         if (error.response) {
           console.log(error.response.data);
-          setMessage(error.response.data.errors[0].msg);
-          setAlertType(false);
+          setMessage(error.response.data.errors[0].msg); //displays error message retrived from backend
+          setAlertType(false); //snackbox popup
           setShowAlert(true);
         }
       }
@@ -95,6 +97,7 @@ export default function LogIn({ handleClose }) {
     setShowAlert(false);
   };
 
+  //pop up modal and form
   return (
     <Modal
       aria-labelledby="transition-modal-title"
@@ -146,6 +149,7 @@ export default function LogIn({ handleClose }) {
                     name="username"
                     autoComplete="username"
                     autoFocus
+                    //sends the username entered value to backend
                     onChange={(e) =>
                       setValues({ ...values, username: e.target.value })
                     }
@@ -159,6 +163,7 @@ export default function LogIn({ handleClose }) {
                     type="password"
                     id="password"
                     autoComplete="current-password"
+                    //sends the password entered value to backend
                     onChange={(e) =>
                       setValues({ ...values, pass: e.target.value })
                     }

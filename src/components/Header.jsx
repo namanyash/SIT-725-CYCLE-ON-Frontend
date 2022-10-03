@@ -152,8 +152,8 @@ const Header = () => {
               <Grid item>
                 <Box
                   sx={{
-                    width: "50px",
-                    height: "50px",
+                    width: "80px",
+                    height: "60px",
                   }}
                 >
                   <img
