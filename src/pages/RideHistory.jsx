@@ -29,8 +29,7 @@ export default function RideHistory() {
     rideHistory && (
       <div className="wrapper">
         <Typography
-          component="h1"
-          variant="h4"
+          fontSize={50}
           sx={{
             marginBottom: 6,
             marginTop: 6,
@@ -43,14 +42,15 @@ export default function RideHistory() {
         </Typography>
 
         <Grid container>
-          {rideHistory.map((item, index) => (
-            <Grid item key={index} xs={4}>
+          {rideHistory.reverse().map((item, index) => (
+            <Grid item key={index} xs={6}>
               <Cards
                 startTime={item.startTime}
                 startLocation={item.startLocation}
                 bikeName={item.bikeName}
                 endTime={item.endTime}
                 endLocation={item.endLocation}
+                fare={item.fare}
               />
             </Grid>
           ))}

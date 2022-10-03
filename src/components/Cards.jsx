@@ -11,6 +11,8 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import Collapse from "@mui/material/Collapse";
 import Avatar from "@mui/material/Avatar";
+import { Grid } from "@mui/material";
+import ArrowForwardTwoToneIcon from "@mui/icons-material/ArrowForwardTwoTone";
 
 const Cards = (props) => {
   const { startTime, endTime } = props;
@@ -18,118 +20,47 @@ const Cards = (props) => {
   const endTimeString = new Date(endTime);
   return (
     <Box>
-      <Card variant="outlined" sx={{ maxWidth: 350, margin: 2 }}>
+      <Card variant="outlined" sx={{ margin: 2 }}>
         <CardContent>
-          <Typography
-            variant="h6"
-            component="div"
-            sx={{
-              marginBottom: 2,
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-            }}
-          >
-            Start Time
-          </Typography>
-          <Typography
-            sx={{
-              marginBottom: 1,
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-            }}
-          >
-            {startTimeString.toLocaleString()}
-          </Typography>
-          <Typography
-            variant="h6"
-            component="div"
-            sx={{
-              marginBottom: 2,
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-            }}
-          >
-            Start Location
-          </Typography>
-          <Typography
-            sx={{
-              marginBottom: 1,
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-            }}
-          >
-            {props.startLocation}
-          </Typography>
-          <Typography
-            variant="h6"
-            component="div"
-            sx={{
-              marginBottom: 2,
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-            }}
-          >
-            Bike Name
-          </Typography>
-          <Typography
-            sx={{
-              marginBottom: 1,
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-            }}
-          >
-            {props.bikeName}
-          </Typography>
-          <Typography
-            variant="h6"
-            component="div"
-            sx={{
-              marginBottom: 2,
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-            }}
-          >
-            End Time
-          </Typography>
-          <Typography
-            sx={{
-              marginBottom: 1,
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-            }}
-          >
-            {endTimeString.toLocaleString()}
-          </Typography>
-          <Typography
-            variant="h6"
-            component="div"
-            sx={{
-              marginBottom: 2,
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-            }}
-          >
-            End Location
-          </Typography>
-          <Typography
-            sx={{
-              marginBottom: 1,
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-            }}
-          >
-            {props.endLocation}
-          </Typography>
+          <Grid container>
+            <Grid item xs={1} />
+            <Grid item xs={5}>
+              <Typography textAlign="left" fontWeight={500} fontSize={24}>
+                Bike: {props.bikeName}
+              </Typography>
+            </Grid>
+            <Grid item xs={5}>
+              <Typography textAlign="right" fontWeight={500} fontSize={36}>
+                ${props.fare}
+              </Typography>
+            </Grid>
+            <Grid container alignItems="center" justifyContent="center">
+              <Grid item xs={1}></Grid>
+              <Grid item xs={4}>
+                <Typography textAlign="left" fontWeight={500} fontSize={24}>
+                  {props.startLocation}
+                </Typography>
+                <Typography textAlign="left" fontWeight={100}>
+                  {startTimeString.toLocaleString()}
+                </Typography>
+              </Grid>
+              <Grid item xs={2}>
+                <Typography textAlign="center" fontWeight={500} fontSize={50}>
+                  <ArrowForwardTwoToneIcon fontSize="xlarge" />
+                </Typography>
+              </Grid>
+
+              <Grid item xs={4}>
+                <Typography textAlign="right" fontWeight={500} fontSize={24}>
+                  {props.endLocation}
+                </Typography>
+                <Typography textAlign="right" fontWeight={100}>
+                  {endTimeString.toLocaleString()}
+                </Typography>
+              </Grid>
+              <Grid item xs={1}></Grid>
+            </Grid>
+          </Grid>
         </CardContent>
       </Card>
     </Box>
