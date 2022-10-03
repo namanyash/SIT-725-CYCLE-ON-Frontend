@@ -15,8 +15,6 @@ import { isLoggedIn } from "./redux/slices/authSlice";
 import { getUser } from "./redux/slices/userSlice";
 
 function App() {
-<<<<<<< HEAD
-=======
   const dispatch = useDispatch();
   const isAuth = useSelector((state) => state[AUTH_REDUCER]);
 
@@ -52,7 +50,6 @@ function App() {
     if (isAuth) dispatch(getUser()); // if loggedIn then make getUser API request via redux saga
   }, [isAuth]);
 
->>>>>>> develop
   return (
     isAuth !== null && (
       <Router>
