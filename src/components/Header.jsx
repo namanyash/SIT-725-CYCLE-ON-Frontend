@@ -24,6 +24,7 @@ import {
   LOGIN,
   LOGOUT,
   PREV_RIDES,
+  PREV_RIDES_ROUTE,
   PROFILE,
   SIGN_UP,
   USER_REDUCER,
@@ -69,6 +70,7 @@ const Header = () => {
         setOpenLogin(!openLogin);
         break;
       case PREV_RIDES:
+        navigate(PREV_RIDES_ROUTE);
         break;
       case WALLET:
         navigate(WALLET_ROUTE);
@@ -152,8 +154,8 @@ const Header = () => {
               <Grid item>
                 <Box
                   sx={{
-                    width: "50px",
-                    height: "50px",
+                    width: "80px",
+                    height: "60px",
                   }}
                 >
                   <img
