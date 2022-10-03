@@ -9,9 +9,11 @@ import Button from "@mui/material/Button";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import { InstantMessage } from "../components";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { USER_REDUCER } from "../../utils";
 import { useEffect } from "react";
+import { putData } from "../../apiConfig";
+import { getUser } from "../redux/slices/userSlice";
 
 export default function WalletPage() {
   const [amount, setAmount] = React.useState(null);
@@ -21,6 +23,7 @@ export default function WalletPage() {
   });
   const [currentBalance, setCurrentBalance] = React.useState(null);
   const userData = useSelector((state) => state[USER_REDUCER]);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     if (userData) {
@@ -28,27 +31,45 @@ export default function WalletPage() {
     }
   }, [userData]);
 
+  function isNumeric(str) {
+    if (typeof str != "string") return false;
+    return !isNaN(str) && !isNaN(parseFloat(str));
+  }
+
   const handleAmountChange = (event) => {
-    setAmount(event.target.value);
+    console.log(event.target.value);
+    if (event.target.value.length <= 0) {
+      return;
+    }
+    if (isNumeric(event.target.value)) {
+      setAmount(parseInt(event.target.value));
+    } else {
+      alert("Please only enter digits!");
+      event.target.value = "";
+    }
   };
   const handlePurchase = (event) => {
+    if (amount <= 0) {
+      alert("Invalid Amount");
+      return;
+    }
     const request = {
       url: "/users/addBalance",
       payload: {
         valueToAdd: amount,
       },
       headers: {
-        //todo
         "x-api-token": "",
       },
     };
-    postData(
+    putData(
       request,
       (response) => {
         setMessage({
           value: "success",
           type: true,
         });
+        dispatch(getUser());
       },
       (error) => {
         if (error.response) {
@@ -75,7 +96,7 @@ export default function WalletPage() {
     >
       <Grid
         container
-        flexDirection="row"
+        flexDirection="column"
         alignItems="center"
         justifyContent="center"
       >
