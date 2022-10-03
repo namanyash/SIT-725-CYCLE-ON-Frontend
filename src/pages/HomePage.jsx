@@ -7,10 +7,11 @@ import {
 } from "@react-google-maps/api";
 import { Box, Skeleton, useTheme } from "@mui/material";
 import { useMemo } from "react";
-import { BookRideComponent, PlacesAutocomplete } from "../components";
+import { BookRideComponent } from "../components";
 import { useEffect } from "react";
-import { stringToLatLngObject } from "../../utils";
-import { getData, putData } from "../../apiConfig";
+import { stringToLatLngObject, USER_REDUCER } from "../../utils";
+import { getData } from "../../apiConfig";
+import { useSelector } from "react-redux";
 
 const libraries = ["places"];
 
@@ -29,6 +30,8 @@ function HomePage() {
   const [directionsResponse, setDirectionsResponse] = useState(null);
   const [isBooked, setIsBooked] = useState(false);
 
+  const userData = useSelector((state) => state[USER_REDUCER]);
+
   const center = useMemo(
     () => ({
       lat: -37.81364711153148,
@@ -36,6 +39,24 @@ function HomePage() {
     }),
     []
   );
+
+  const calculateRoute = async (start, end, setDirections) => {
+    // Calculating the routes
+    const directionsService = new google.maps.DirectionsService();
+    const results = await directionsService.route(
+      {
+        origin: stringToLatLngObject(start),
+        destination: stringToLatLngObject(end),
+        travelMode: google.maps.TravelMode.BICYCLING,
+      },
+      (result, status) => {
+        if (status === "OK" && result) {
+          setDirectionsResponse(result);
+          setDirections && setDirections(result.routes[0].legs[0]);
+        }
+      }
+    );
+  };
 
   const onLoad = useCallback(function callback(map) {
     const bounds = new window.google.maps.LatLngBounds(center);
@@ -75,6 +96,20 @@ function HomePage() {
     }
     setOpenStationModal(false);
   };
+
+  useEffect(() => {
+    if (isLoaded) {
+      if (userData) {
+        // Set active ride
+        if (userData.activeRide) {
+          const { startLocationCoordinates, endLocationCoordinates } =
+            userData.activeRide;
+          calculateRoute(startLocationCoordinates, endLocationCoordinates);
+          setIsBooked(true);
+        }
+      }
+    }
+  }, [userData, isLoaded]);
 
   return (
     <Box
@@ -136,7 +171,7 @@ function HomePage() {
               handleClose={handleStationModalClose}
               stationData={currentStation}
               stations={stations}
-              setDirectionsResponse={setDirectionsResponse}
+              calculateRoute={calculateRoute}
             />
           )}
         </>
