@@ -5,14 +5,16 @@ import {
   Marker,
   DirectionsRenderer,
 } from "@react-google-maps/api";
-import { Box, Skeleton, useTheme } from "@mui/material";
+import { Box, Button, Skeleton, useTheme } from "@mui/material";
 import { useMemo } from "react";
-import { BookRideComponent, PlacesAutocomplete } from "../components";
+import { BookRideComponent, CustomDialog } from "../components";
 import { useEffect } from "react";
-import { stringToLatLngObject } from "../../utils";
+import { stringToLatLngObject, USER_REDUCER } from "../../utils";
 import { getData, putData } from "../../apiConfig";
+import { useSelector } from "react-redux";
 
 const libraries = ["places"];
+const END_RIDE = "End Ride";
 
 function HomePage() {
   const theme = useTheme();
@@ -28,6 +30,9 @@ function HomePage() {
 
   const [directionsResponse, setDirectionsResponse] = useState(null);
   const [isBooked, setIsBooked] = useState(false);
+  const [openDialog, setOpenDialog] = useState(false);
+
+  const userData = useSelector((state) => state[USER_REDUCER]);
 
   const center = useMemo(
     () => ({
@@ -36,6 +41,24 @@ function HomePage() {
     }),
     []
   );
+
+  const calculateRoute = async (start, end, setDirections) => {
+    // Calculating the routes
+    const directionsService = new google.maps.DirectionsService();
+    const results = await directionsService.route(
+      {
+        origin: stringToLatLngObject(start),
+        destination: stringToLatLngObject(end),
+        travelMode: google.maps.TravelMode.BICYCLING,
+      },
+      (result, status) => {
+        if (status === "OK" && result) {
+          setDirectionsResponse(result);
+          setDirections && setDirections(result.routes[0].legs[0]);
+        }
+      }
+    );
+  };
 
   const onLoad = useCallback(function callback(map) {
     const bounds = new window.google.maps.LatLngBounds(center);
@@ -46,6 +69,30 @@ function HomePage() {
   const onUnmount = useCallback(function callback(map) {
     setMap(null);
   }, []);
+
+  const handleEndRideButton = (e) => {
+    e.preventDefault();
+    setOpenDialog(!openDialog);
+  };
+
+  const handleDialogClose = (e) => {
+    if (e.currentTarget.textContent == END_RIDE) {
+      const request = {
+        url: "/rides/endRide",
+      };
+      putData(
+        request,
+        (response) => {
+          setIsBooked(false);
+          setDirectionsResponse(null);
+        },
+        (error) => {
+          console.log(error);
+        }
+      );
+    }
+    setOpenDialog(!openDialog);
+  };
 
   useEffect(() => {
     if (isLoaded) {
@@ -75,6 +122,20 @@ function HomePage() {
     }
     setOpenStationModal(false);
   };
+
+  useEffect(() => {
+    if (isLoaded) {
+      if (userData) {
+        // Set active ride
+        if (userData.activeRide) {
+          const { startLocationCoordinates, endLocationCoordinates } =
+            userData.activeRide;
+          calculateRoute(startLocationCoordinates, endLocationCoordinates);
+          setIsBooked(true);
+        }
+      }
+    }
+  }, [userData, isLoaded]);
 
   return (
     <Box
@@ -136,12 +197,43 @@ function HomePage() {
               handleClose={handleStationModalClose}
               stationData={currentStation}
               stations={stations}
-              setDirectionsResponse={setDirectionsResponse}
+              calculateRoute={calculateRoute}
             />
+          )}
+          {isBooked && (
+            <Button
+              variant="contained"
+              color="error"
+              size="large"
+              sx={{
+                position: "absolute",
+                right: "10px",
+                top: "10px",
+              }}
+              onClick={handleEndRideButton}
+            >
+              {END_RIDE}
+            </Button>
           )}
         </>
       ) : (
         <Skeleton variant="rectangular" width="100%" height="100%" />
+      )}
+      {openDialog && (
+        <CustomDialog
+          dialogTitle="End current ride?"
+          dialogText="Are you sure you want to end current ride?"
+          dialogAction={
+            <Button
+              color="error"
+              onClick={handleDialogClose}
+              variant="contained"
+            >
+              {END_RIDE}
+            </Button>
+          }
+          handleClose={handleDialogClose}
+        />
       )}
     </Box>
   );

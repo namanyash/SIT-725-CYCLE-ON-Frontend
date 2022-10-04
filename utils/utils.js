@@ -9,7 +9,7 @@ export function stringToLatLngObject(data) {
 export const parseJwt = (token) => {
   // function to parse JWT token
   try {
-    return atob(token.split(".")[1]);
+    return JSON.parse(atob(token.split(".")[1]));
   } catch (e) {
     return null;
   }

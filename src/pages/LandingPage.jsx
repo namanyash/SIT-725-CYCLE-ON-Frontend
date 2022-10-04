@@ -1,4 +1,12 @@
-import { Box, Grid, Typography, Paper, Stack, Fab } from "@mui/material";
+import {
+  Box,
+  Grid,
+  Typography,
+  Paper,
+  Stack,
+  Fab,
+  Avatar,
+} from "@mui/material";
 import React from "react";
 import HomeCycle from "../assets/home_cycle.svg";
 import {
@@ -12,6 +20,7 @@ import Cycling from "../assets/cycling_quote.jpg";
 import { useSelector } from "react-redux";
 import { AUTH_REDUCER, HOME_ROUTE } from "../../utils";
 import { useNavigate } from "react-router-dom";
+import LOGO from "../assets/logo.png";
 
 function HomePage() {
   const isAuth = useSelector((state) => state[AUTH_REDUCER]);
@@ -30,6 +39,14 @@ function HomePage() {
             <Grid item xs={12} md={5}>
               <Stack spacing={3}>
                 <Box>
+                  <Avatar
+                    src={LOGO}
+                    sx={{
+                      width: 200,
+                      height: 200,
+                      margin: "0 auto",
+                    }}
+                  />
                   <Typography variant="h2" fontWeight={900}>
                     Rent a cycle - Enjoy the difference
                   </Typography>

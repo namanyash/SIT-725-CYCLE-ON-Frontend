@@ -152,21 +152,19 @@ const Header = () => {
               )}
 
               <Grid item>
-                <Box
+                <Avatar
+                  src={LOGO}
                   sx={{
-                    width: "80px",
-                    height: "60px",
+                    width: 60,
+                    height: 60,
+                    bgcolor: theme.palette.secondary.light,
+                    "& .MuiAvatar-img": {
+                      height: "120%",
+                    },
+                    cursor: "pointer",
                   }}
-                >
-                  <img
-                    width="100%"
-                    height="100%"
-                    src={LOGO}
-                    component="link"
-                    style={{ cursor: "pointer" }}
-                    onClick={() => navigate(LANDING_ROUTE)}
-                  />
-                </Box>
+                  onClick={() => navigate(LANDING_ROUTE)}
+                />
               </Grid>
               <Grid item xs="auto" container spacing={2} alignItems="center">
                 <Grid item>

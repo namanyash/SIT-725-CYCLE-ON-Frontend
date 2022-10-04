@@ -15,7 +15,6 @@ import {
   useTheme,
 } from "@mui/material";
 import { putData } from "../../apiConfig";
-import { stringToLatLngObject } from "../../utils";
 import PlacesAutocomplete from "./PlacesAutocomplete";
 
 function BookRideComponent({
@@ -23,7 +22,7 @@ function BookRideComponent({
   handleClose,
   stationData,
   stations,
-  setDirectionsResponse,
+  calculateRoute,
 }) {
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down("md"));
@@ -34,27 +33,13 @@ function BookRideComponent({
 
   const [directions, setDirections] = useState("");
 
-  const calculateRoute = async () => {
-    // Calculating the routes
-    const directionsService = new google.maps.DirectionsService();
-    const results = await directionsService.route(
-      {
-        origin: stringToLatLngObject(originData.coordinates),
-        destination: stringToLatLngObject(destinationData.coordinates),
-        travelMode: google.maps.TravelMode.BICYCLING,
-      },
-      (result, status) => {
-        if (status === "OK" && result) {
-          setDirectionsResponse(result);
-          setDirections(result.routes[0].legs[0]);
-        }
-      }
-    );
-  };
-
   useEffect(() => {
     if (originData && destinationData) {
-      calculateRoute();
+      calculateRoute(
+        originData.coordinates,
+        destinationData.coordinates,
+        setDirections
+      );
     }
   }, [originData, destinationData]);
 
