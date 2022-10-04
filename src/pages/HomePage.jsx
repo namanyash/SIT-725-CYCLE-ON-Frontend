@@ -84,7 +84,7 @@ function HomePage() {
         request,
         (response) => {
           setIsBooked(false);
-          setDirectionsResponse(false);
+          setDirectionsResponse(null);
         },
         (error) => {
           console.log(error);
