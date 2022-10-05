@@ -32,7 +32,7 @@ const style = {
   boxShadow: 24,
   p: 4,
 };
-
+//copyright footer
 function Copyright(props) {
   return (
     <Typography
@@ -58,7 +58,7 @@ export default function LogIn({ handleClose }) {
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
-
+ 
   const handleSubmit = (event) => {
     event.preventDefault();
     const request = {
