@@ -1,15 +1,21 @@
 import { CssBaseline } from "@mui/material";
 import { ThemeProvider } from "@mui/material/styles";
+import { createRoot } from "react-dom/client";
 import React from "react";
-import ReactDOM from "react-dom";
 import App from "./App";
 import theme from "./styles/Theme";
+import store from "./redux/configureStore";
+import { Provider } from "react-redux";
 
-ReactDOM.render(
+const container = document.getElementById("root");
+const root = createRoot(container);
+
+root.render(
   <ThemeProvider theme={theme}>
     <CssBaseline>
-      <App />
+      <Provider store={store}>
+        <App />
+      </Provider>
     </CssBaseline>
-  </ThemeProvider>,
-  document.getElementById("root")
+  </ThemeProvider>
 );

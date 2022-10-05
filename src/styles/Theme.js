@@ -1,4 +1,4 @@
-import { createTheme } from "@mui/material/styles";
+import { createTheme, responsiveFontSizes } from "@mui/material/styles";
 
 let theme = createTheme({
   typography: {
@@ -9,13 +9,13 @@ let theme = createTheme({
       light: "#52c7b8",
       main: "#009688",
       dark: "#00675b",
-      contrastText: "#ffff",
+      contrastText: "#ffffff",
     },
     secondary: {
       light: "#ffffff",
       main: "#ffede1",
       dark: "#ccbbaf",
-      contrastText: "#0000",
+      contrastText: "#000000",
     },
   },
   components: {
@@ -27,5 +27,7 @@ let theme = createTheme({
     },
   },
 });
+
+theme = responsiveFontSizes(theme);
 
 export default theme;

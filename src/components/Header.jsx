@@ -1,24 +1,58 @@
-import * as React from "react";
-import AppBar from "@mui/material/AppBar";
-import Box from "@mui/material/Box";
-import Toolbar from "@mui/material/Toolbar";
-import IconButton from "@mui/material/IconButton";
-import Typography from "@mui/material/Typography";
-import Menu from "@mui/material/Menu";
+import React, { useState } from "react";
+import {
+  Fab,
+  AppBar,
+  Box,
+  Toolbar,
+  IconButton,
+  Typography,
+  Menu,
+  Container,
+  Avatar,
+  Button,
+  MenuItem,
+  Grid,
+  useMediaQuery,
+  useTheme,
+} from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
-import Container from "@mui/material/Container";
-import Avatar from "@mui/material/Avatar";
-import Button from "@mui/material/Button";
-import Tooltip from "@mui/material/Tooltip";
-import MenuItem from "@mui/material/MenuItem";
-import AdbIcon from "@mui/icons-material/Adb";
+import { LogIn, SignUp } from "../pages";
+import {
+  AUTH_REDUCER,
+  HOME_ROUTE,
+  LANDING_ROUTE,
+  LOGIN,
+  LOGOUT,
+  NAVIGATE,
+  PREV_RIDES,
+  PREV_RIDES_ROUTE,
+  SIGN_UP,
+  USER_REDUCER,
+  WALLET,
+  WALLET_ROUTE,
+} from "../../utils";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { getNameInitials } from "../../utils/utils";
+import { isLoggedIn } from "../redux/slices/authSlice";
 
-const pages = ["Previous Rides", "Wallet", "Log in", "Sign up"];
-const settings = ["Profile", "Logout"];
+import LOGO from "../assets/logo.png";
+
+const settings = [LOGOUT];
+const publicMenu = [SIGN_UP, LOGIN];
+const privateMenu = [NAVIGATE, PREV_RIDES, WALLET];
 
 const Header = () => {
-  const [anchorElNav, setAnchorElNav] = React.useState(null);
-  const [anchorElUser, setAnchorElUser] = React.useState(null);
+  const [anchorElNav, setAnchorElNav] = useState(null);
+  const [anchorElUser, setAnchorElUser] = useState(null);
+  const [openReg, setOpenReg] = useState(false);
+  const [openLogin, setOpenLogin] = useState(false);
+  const navigate = useNavigate();
+  const isAuth = useSelector((state) => state[AUTH_REDUCER]);
+  const userData = useSelector((state) => state[USER_REDUCER]);
+  const dispatch = useDispatch();
+  const theme = useTheme();
+  const isMobileView = useMediaQuery(theme.breakpoints.down("md"));
 
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);
@@ -27,141 +61,218 @@ const Header = () => {
     setAnchorElUser(event.currentTarget);
   };
 
-  const handleCloseNavMenu = () => {
+  const handleCloseNavMenu = (event) => {
+    switch (event.currentTarget.textContent) {
+      case SIGN_UP:
+        setOpenReg(!openReg);
+        break;
+      case LOGIN:
+        setOpenLogin(!openLogin);
+        break;
+      case PREV_RIDES:
+        navigate(PREV_RIDES_ROUTE);
+        break;
+      case WALLET:
+        navigate(WALLET_ROUTE);
+        break;
+      case NAVIGATE:
+        navigate(HOME_ROUTE);
+        break;
+      default:
+        break;
+    }
     setAnchorElNav(null);
   };
 
-  const handleCloseUserMenu = () => {
+  const handleRegisterOpenClose = () => {
+    setOpenReg(!openReg);
+  };
+
+  const handleLoginOpenClose = () => {
+    setOpenLogin(!openLogin);
+  };
+
+  const handleLogout = () => {
+    localStorage.clear();
+    dispatch(isLoggedIn(false));
+  };
+
+  const handleCloseUserMenu = (event) => {
+    switch (event.currentTarget.textContent) {
+      case LOGOUT:
+        handleLogout();
+        break;
+      default:
+        break;
+    }
     setAnchorElUser(null);
   };
 
   return (
-    <AppBar
-      position="static"
-      sx={{
-        marginBottom: 2,
-      }}
-    >
-      <Container maxWidth="xl">
-        <Toolbar disableGutters>
-          <AdbIcon sx={{ display: { xs: "none", md: "flex" }, mr: 1 }} />
-          <Typography
-            variant="h6"
-            noWrap
-            component="a"
-            href="/"
-            sx={{
-              mr: 2,
-              display: { xs: "none", md: "flex" },
-              fontFamily: "monospace",
-              fontWeight: 700,
-              letterSpacing: ".3rem",
-              color: "inherit",
-              textDecoration: "none",
-            }}
-          >
-            LOGO
-          </Typography>
+    <>
+      <AppBar position="static">
+        <Container maxWidth="xl">
+          <Toolbar disableGutters>
+            <Grid container justifyContent="space-between" alignItems="center">
+              {isMobileView && (
+                <Grid item>
+                  <Box>
+                    <IconButton
+                      size="large"
+                      aria-label="account of current user"
+                      aria-controls="menu-appbar"
+                      aria-haspopup="true"
+                      onClick={handleOpenNavMenu}
+                      color="inherit"
+                    >
+                      <MenuIcon />
+                    </IconButton>
+                    <Menu
+                      id="menu-appbar"
+                      anchorEl={anchorElNav}
+                      anchorOrigin={{
+                        vertical: "bottom",
+                        horizontal: "left",
+                      }}
+                      keepMounted
+                      transformOrigin={{
+                        vertical: "top",
+                        horizontal: "left",
+                      }}
+                      open={Boolean(anchorElNav)}
+                      onClose={handleCloseNavMenu}
+                    >
+                      {(isAuth ? privateMenu : publicMenu).map(
+                        (item, index) => (
+                          <MenuItem key={index} onClick={handleCloseNavMenu}>
+                            <Typography textAlign="center">{item}</Typography>
+                          </MenuItem>
+                        )
+                      )}
+                    </Menu>
+                  </Box>
+                </Grid>
+              )}
 
-          <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}>
-            <IconButton
-              size="large"
-              aria-label="account of current user"
-              aria-controls="menu-appbar"
-              aria-haspopup="true"
-              onClick={handleOpenNavMenu}
-              color="inherit"
-            >
-              <MenuIcon />
-            </IconButton>
-            <Menu
-              id="menu-appbar"
-              anchorEl={anchorElNav}
-              anchorOrigin={{
-                vertical: "bottom",
-                horizontal: "left",
-              }}
-              keepMounted
-              transformOrigin={{
-                vertical: "top",
-                horizontal: "left",
-              }}
-              open={Boolean(anchorElNav)}
-              onClose={handleCloseNavMenu}
-              sx={{
-                display: { xs: "block", md: "none" },
-              }}
-            >
-              {pages.map((page) => (
-                <MenuItem key={page} onClick={handleCloseNavMenu}>
-                  <Typography textAlign="center">{page}</Typography>
-                </MenuItem>
-              ))}
-            </Menu>
-          </Box>
-          <AdbIcon sx={{ display: { xs: "flex", md: "none" }, mr: 1 }} />
-          <Typography
-            variant="h5"
-            noWrap
-            component="a"
-            href=""
-            sx={{
-              mr: 2,
-              display: { xs: "flex", md: "none" },
-              flexGrow: 1,
-              fontFamily: "monospace",
-              fontWeight: 700,
-              letterSpacing: ".3rem",
-              color: "inherit",
-              textDecoration: "none",
-            }}
-          >
-            LOGO
-          </Typography>
-          <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
-            {pages.map((page) => (
-              <Button
-                key={page}
-                onClick={handleCloseNavMenu}
-                sx={{ my: 2, color: "white", display: "block" }}
-              >
-                {page}
-              </Button>
-            ))}
-          </Box>
-
-          <Box sx={{ flexGrow: 0 }}>
-            <Tooltip title="Open settings">
-              <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
-              </IconButton>
-            </Tooltip>
-            <Menu
-              sx={{ mt: "45px" }}
-              id="menu-appbar"
-              anchorEl={anchorElUser}
-              anchorOrigin={{
-                vertical: "top",
-                horizontal: "right",
-              }}
-              keepMounted
-              transformOrigin={{
-                vertical: "top",
-                horizontal: "right",
-              }}
-              open={Boolean(anchorElUser)}
-              onClose={handleCloseUserMenu}
-            >
-              {settings.map((setting) => (
-                <MenuItem key={setting} onClick={handleCloseUserMenu}>
-                  <Typography textAlign="center">{setting}</Typography>
-                </MenuItem>
-              ))}
-            </Menu>
-          </Box>
-        </Toolbar>
-      </Container>
-    </AppBar>
+              <Grid item>
+                <Avatar
+                  src={LOGO}
+                  sx={{
+                    width: 60,
+                    height: 60,
+                    bgcolor: theme.palette.secondary.main,
+                    "& .MuiAvatar-img": {
+                      objectFit: "contain",
+                      width: "90%",
+                    },
+                    cursor: "pointer",
+                  }}
+                  onClick={() => navigate(LANDING_ROUTE)}
+                />
+              </Grid>
+              <Grid item xs="auto" container spacing={2} alignItems="center">
+                <Grid item>
+                  <Box
+                    sx={{
+                      flexGrow: 1,
+                      display: { xs: "none", md: "flex" },
+                    }}
+                  >
+                    {isAuth ? (
+                      <>
+                        <Button
+                          onClick={handleCloseNavMenu}
+                          sx={{ color: "white", display: "block" }}
+                        >
+                          {NAVIGATE}
+                        </Button>
+                        <Button
+                          onClick={handleCloseNavMenu}
+                          sx={{ color: "white", display: "block" }}
+                        >
+                          {PREV_RIDES}
+                        </Button>
+                        <Button
+                          onClick={handleCloseNavMenu}
+                          sx={{ color: "white", display: "block" }}
+                        >
+                          {WALLET}
+                        </Button>
+                      </>
+                    ) : (
+                      <>
+                        <Fab
+                          sx={{
+                            my: 2,
+                            mr: 2,
+                          }}
+                          variant="extended"
+                          color="secondary"
+                          size="medium"
+                          onClick={handleLoginOpenClose}
+                        >
+                          {LOGIN}
+                        </Fab>
+                        <Fab
+                          sx={{
+                            my: 2,
+                          }}
+                          variant="extended"
+                          color="secondary"
+                          size="medium"
+                          onClick={handleRegisterOpenClose}
+                        >
+                          {SIGN_UP}
+                        </Fab>
+                      </>
+                    )}
+                  </Box>
+                </Grid>
+                {isAuth && (
+                  <Grid item>
+                    <Box>
+                      <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
+                        <Avatar sx={{ bgcolor: "secondary.dark" }}>
+                          {getNameInitials(
+                            userData?.firstName + " " + userData?.lastName
+                          )}
+                        </Avatar>
+                      </IconButton>
+                      <Menu
+                        sx={{ mt: "45px" }}
+                        id="menu-appbar"
+                        anchorEl={anchorElUser}
+                        anchorOrigin={{
+                          vertical: "top",
+                          horizontal: "right",
+                        }}
+                        keepMounted
+                        transformOrigin={{
+                          vertical: "top",
+                          horizontal: "right",
+                        }}
+                        open={Boolean(anchorElUser)}
+                        onClose={handleCloseUserMenu}
+                      >
+                        {settings.map((setting) => (
+                          <MenuItem key={setting} onClick={handleCloseUserMenu}>
+                            <Typography textAlign="center">
+                              {setting}
+                            </Typography>
+                          </MenuItem>
+                        ))}
+                      </Menu>
+                    </Box>
+                  </Grid>
+                )}
+              </Grid>
+            </Grid>
+          </Toolbar>
+        </Container>
+      </AppBar>
+      {openLogin && <LogIn handleClose={handleLoginOpenClose} />}
+      {openReg && <SignUp handleClose={handleRegisterOpenClose} />}
+    </>
   );
 };
 

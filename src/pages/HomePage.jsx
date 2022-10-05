@@ -1,131 +1,257 @@
-import { Box, Grid, Typography, Paper, Stack } from "@mui/material";
-import React from "react";
-import HomeCycle from "../assets/home_cycle.svg";
-import { InsertInvitation, DirectionsBike, Wallet } from "@mui/icons-material";
-import theme from "../styles/Theme";
-import Cycling from "../assets/cycling_quote.jpg";
+import React, { useCallback, useState } from "react";
+import {
+  useJsApiLoader,
+  GoogleMap,
+  Marker,
+  DirectionsRenderer,
+} from "@react-google-maps/api";
+import { Box, Button, Skeleton, useTheme } from "@mui/material";
+import { useMemo } from "react";
+import { BookRideComponent, CustomDialog } from "../components";
+import { useEffect } from "react";
+import { stringToLatLngObject, USER_REDUCER } from "../../utils";
+import { getData, putData } from "../../apiConfig";
+import { useDispatch, useSelector } from "react-redux";
+import { getUser } from "../redux/slices/userSlice";
+import { successAlert } from "../redux/slices/alertSlice";
+
+const libraries = ["places"];
+const END_RIDE = "End Ride";
 
 function HomePage() {
+  const theme = useTheme();
+  const [map, setMap] = useState(null);
+  const { isLoaded } = useJsApiLoader({
+    id: "google-map-script",
+    googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_API_KEY,
+    libraries,
+  });
+  const [stations, setStations] = useState(false);
+  const [currentStation, setCurrentStation] = useState(undefined);
+  const [openStationModal, setOpenStationModal] = useState(false);
+
+  const [directionsResponse, setDirectionsResponse] = useState(null);
+  const [isBooked, setIsBooked] = useState(false);
+  const [openDialog, setOpenDialog] = useState(false);
+
+  const userData = useSelector((state) => state[USER_REDUCER]);
+  const dispatch = useDispatch();
+
+  const center = useMemo(
+    () => ({
+      lat: -37.81364711153148,
+      lng: 145.11666757147196,
+    }),
+    []
+  );
+
+  const calculateRoute = async (start, end, setDirections) => {
+    // Calculating the routes
+    const directionsService = new google.maps.DirectionsService();
+    const results = await directionsService.route(
+      {
+        origin: stringToLatLngObject(start),
+        destination: stringToLatLngObject(end),
+        travelMode: google.maps.TravelMode.BICYCLING,
+      },
+      (result, status) => {
+        if (status === "OK" && result) {
+          setDirectionsResponse(result);
+          setDirections && setDirections(result.routes[0].legs[0]);
+        }
+      }
+    );
+  };
+
+  const onLoad = useCallback(function callback(map) {
+    const bounds = new window.google.maps.LatLngBounds(center);
+    map.fitBounds(bounds);
+    setMap(map);
+  }, []);
+
+  const onUnmount = useCallback(function callback(map) {
+    setMap(null);
+  }, []);
+
+  const handleEndRideButton = (e) => {
+    e.preventDefault();
+    setOpenDialog(!openDialog);
+  };
+
+  const handleDialogClose = (e) => {
+    if (e.currentTarget.textContent == END_RIDE) {
+      const request = {
+        url: "/rides/endRide",
+      };
+      putData(
+        request,
+        (response) => {
+          dispatch(getUser());
+          setIsBooked(false);
+          setDirectionsResponse(null);
+          dispatch(
+            successAlert({ msg: "You have successfully ended your ride." })
+          );
+        },
+        (error) => {
+          console.log(error);
+        }
+      );
+    }
+    setOpenDialog(!openDialog);
+  };
+
+  useEffect(() => {
+    if (isLoaded) {
+      const request = {
+        url: "/locations/getLocation",
+      };
+      getData(
+        request,
+        (response) => {
+          setStations(response.data);
+        },
+        (error) => {
+          console.log(error);
+        }
+      );
+    }
+  }, [isLoaded]);
+
+  const handleStationClick = (event, station) => {
+    if (isBooked) {
+      return;
+    }
+    setOpenStationModal(true);
+    setCurrentStation(station);
+  };
+
+  const handleStationModalClose = (val) => {
+    if (val == "done") {
+      setIsBooked(true);
+    }
+    setOpenStationModal(false);
+  };
+
+  useEffect(() => {
+    if (isLoaded) {
+      if (userData) {
+        // Set active ride
+        if (userData?.activeRide && userData?.activeRide?.bikeId) {
+          const { startLocationCoordinates, endLocationCoordinates } =
+            userData.activeRide;
+          calculateRoute(startLocationCoordinates, endLocationCoordinates);
+          setIsBooked(true);
+        }
+      }
+    }
+  }, [userData, isLoaded]);
+
   return (
-    <Box>
-      <Paper
-        sx={{
-          my: 1,
-        }}
-        elevation={0}
-        square
-      >
-        <Grid container alignItems="center">
-          <Grid item xs={12} md={5}>
-            <Box mx={2}>
-              <Typography variant="h2" fontWeight={900}>
-                Rent a cycle - Enjoy the difference
-              </Typography>
-              <Typography variant="h6" fontWeight={400}>
-                A web cycle renting platform which will provide the service of
-                bicycle renting to the users for commuting
-              </Typography>
-            </Box>
-          </Grid>
-          <Grid item xs={12} md={7}>
-            <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
-              <img src={HomeCycle} />
-            </Box>
-          </Grid>
-        </Grid>
-      </Paper>
-      <Paper
-        sx={{
-          p: 5,
-          backgroundColor: theme.palette.secondary.main,
-        }}
-      >
-        <Box
-          sx={{
-            width: { xs: "100%", md: "70vw" },
-            mx: "auto",
-            my: 0,
-          }}
-        >
-          <Typography variant="h4" fontWeight="bold" mb={4}>
-            What makes Cycle-on special
-          </Typography>
-          <Grid container spacing={4}>
-            <Grid item xs={12} md={4}>
-              <Stack spacing={2}>
-                <InsertInvitation fontSize="large" color="primary" />
-                <Typography variant="h5" fontWeight="bold" gutterBottom>
-                  Book a ride
-                </Typography>
-                <Typography variant="body1">
-                  Locate the nearby Cycle-on stations and book your ride
-                </Typography>
-              </Stack>
-            </Grid>
-            <Grid item xs={12} md={4}>
-              <Stack spacing={2}>
-                <Wallet fontSize="large" color="primary" />
-                <Typography variant="h5" fontWeight="bold" gutterBottom>
-                  Maintain your wallet
-                </Typography>
-                <Typography variant="body1">
-                  Add or withdraw money from your wallet. Easily pay for your
-                  rides through the Cycle-on
-                </Typography>
-              </Stack>
-            </Grid>
-            <Grid item xs={12} md={4}>
-              <Stack spacing={2}>
-                <DirectionsBike fontSize="large" color="primary" />
-                <Typography variant="h5" fontWeight="bold" gutterBottom>
-                  Check previous rides
-                </Typography>
-                <Typography variant="body1">
-                  Check previous rides stats like ride distance, duration and
-                  cost.
-                </Typography>
-              </Stack>
-            </Grid>
-          </Grid>
-        </Box>
-      </Paper>
-      <Paper
-        sx={{
-          backgroundColor: theme.palette.secondary.dark,
-          p: 5,
-        }}
-      >
-        <Paper
-          sx={{
-            width: { xs: "100%", md: "70vw" },
-            backgroundColor: theme.palette.primary.main,
-            color: theme.palette.primary.contrastText,
-            mx: "auto",
-            my: 0,
-            p: 2,
-          }}
-          elevation={6}
-        >
-          <Grid container alignItems="center">
-            <Grid item xs={12} md={4}>
-              <img src={Cycling} width={300} height={250} />
-            </Grid>
-            <Grid item xs={12} md={8}>
-              <Typography
-                fontStyle="italic"
-                variant="h5"
-                fontWeight="bold"
-                gutterBottom
-              >
-                “Cyclers see considerably more of this beautiful world than any
-                other class of citizens. A good bicycle, well applied, will cure
-                most ills this flesh is heir to”
-              </Typography>
-              <Typography variant="h6">- Dr. K. K. Doty</Typography>
-            </Grid>
-          </Grid>
-        </Paper>
-      </Paper>
+    <Box
+      sx={{
+        width: "100%",
+        height: "83vh",
+        position: "relative",
+        display: "flex",
+      }}
+    >
+      {isLoaded ? (
+        <>
+          <GoogleMap
+            center={center}
+            zoom={15}
+            options={{
+              disableDefaultUI: true,
+              zoomControl: false,
+              streetViewControl: false,
+              mapTypeControl: false,
+            }}
+            onLoad={onLoad}
+            onUnmount={onUnmount}
+            mapContainerStyle={{ width: "100%", height: "100%" }}
+          >
+            {stations &&
+              stations.map((station) => {
+                return (
+                  <Marker
+                    key={station._id}
+                    position={stringToLatLngObject(station.coordinates)}
+                    clickable={isBooked ? false : true}
+                    icon={{
+                      path: "M 18.18 10 l -1.7 -4.68 C 16.19 4.53 15.44 4 14.6 4 H 12 v 2 h 2.6 l 1.46 4 h -4.81 l -0.36 -1 H 12 V 7 H 7 v 2 h 1.75 l 1.82 5 H 9.9 c -0.44 -2.23 -2.31 -3.88 -4.65 -3.99 C 2.45 9.87 0 12.2 0 15 c 0 2.8 2.2 5 5 5 c 2.46 0 4.45 -1.69 4.9 -4 h 4.2 c 0.44 2.23 2.31 3.88 4.65 3.99 c 2.8 0.13 5.25 -2.19 5.25 -5 c 0 -2.8 -2.2 -5 -5 -5 H 18.18 Z M 7.82 16 c -0.4 1.17 -1.49 2 -2.82 2 c -1.68 0 -3 -1.32 -3 -3 s 1.32 -3 3 -3 c 1.33 0 2.42 0.83 2.82 2 H 5 v 2 H 7.82 Z M 14.1 14 h -1.4 l -0.73 -2 H 15 C 14.56 12.58 14.24 13.25 14.1 14 Z M 19 18 c -1.68 0 -3 -1.32 -3 -3 c 0 -0.93 0.41 -1.73 1.05 -2.28 l 0.96 2.64 l 1.88 -0.68 l -0.97 -2.67 c 0.03 0 0.06 -0.01 0.09 -0.01 c 1.68 0 3 1.32 3 3 S 20.68 18 19 18 Z",
+                      fillColor:
+                        station?.bikes.length == 0
+                          ? theme.palette.grey[500]
+                          : theme.palette.primary.main,
+                      fillOpacity: 0.6,
+                      scale: 1.5,
+                    }}
+                    onClick={(e) => handleStationClick(e, station)}
+                    title={
+                      station?.bikes.length == 0 ? "No Bikes Available" : ""
+                    }
+                  />
+                );
+              })}
+
+            {directionsResponse && isBooked && (
+              <DirectionsRenderer
+                directions={directionsResponse}
+                options={{
+                  polylineOptions: {
+                    zIndex: 50,
+                    strokeWeight: 7,
+                    strokeColor: theme.palette.info.light,
+                  },
+                }}
+              />
+            )}
+          </GoogleMap>
+          {openStationModal && (
+            <BookRideComponent
+              open={openStationModal}
+              handleClose={handleStationModalClose}
+              stationData={currentStation}
+              stations={stations}
+              calculateRoute={calculateRoute}
+            />
+          )}
+          {isBooked && (
+            <Button
+              variant="contained"
+              color="error"
+              size="large"
+              sx={{
+                position: "absolute",
+                right: "10px",
+                top: "10px",
+              }}
+              onClick={handleEndRideButton}
+            >
+              {END_RIDE}
+            </Button>
+          )}
+        </>
+      ) : (
+        <Skeleton variant="rectangular" width="100%" height="100%" />
+      )}
+      {openDialog && (
+        <CustomDialog
+          dialogTitle="End current ride?"
+          dialogText="Are you sure you want to end current ride?"
+          dialogAction={
+            <Button
+              color="error"
+              onClick={handleDialogClose}
+              variant="contained"
+            >
+              {END_RIDE}
+            </Button>
+          }
+          handleClose={handleDialogClose}
+        />
+      )}
     </Box>
   );
 }
