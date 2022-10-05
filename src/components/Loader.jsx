@@ -13,7 +13,7 @@ export default function Loader() {
 
   return (
     <Backdrop
-      sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+      sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.modal + 1 }}
       open={loader}
       onClick={handleClose}
     >
