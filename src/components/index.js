@@ -2,16 +2,18 @@ import Footer from "./Footer";
 import Header from "./Header";
 import ProtectedRoutes from "./ProtectedRoutes";
 import PlacesAutocomplete from "./PlacesAutocomplete";
-import InstantMessage from "./InstantMessage";
+import Alerts from "./Alerts";
 import BookRideComponent from "./BookRideComponent";
 import CustomDialog from "./CustomDialog";
+import Loader from "./Loader";
 
 export {
   Footer,
   Header,
   ProtectedRoutes,
   PlacesAutocomplete,
-  InstantMessage,
+  Alerts,
   BookRideComponent,
   CustomDialog,
+  Loader,
 };

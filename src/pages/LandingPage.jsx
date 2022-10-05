@@ -20,7 +20,7 @@ import Cycling from "../assets/cycling_quote.jpg";
 import { useSelector } from "react-redux";
 import { AUTH_REDUCER, HOME_ROUTE } from "../../utils";
 import { useNavigate } from "react-router-dom";
-import LOGO from "../assets/logo.png";
+import LOGO from "../assets/logo_with_text.png";
 
 function HomePage() {
   const isAuth = useSelector((state) => state[AUTH_REDUCER]);
@@ -42,10 +42,14 @@ function HomePage() {
                   <Avatar
                     src={LOGO}
                     sx={{
-                      width: 200,
-                      height: 200,
+                      width: 150,
+                      height: 150,
                       margin: "0 auto",
+                      "& .MuiAvatar-img": {
+                        objectFit: "contain",
+                      },
                     }}
+                    variant="square"
                   />
                   <Typography variant="h2" fontWeight={900}>
                     Rent a cycle - Enjoy the difference
@@ -70,7 +74,7 @@ function HomePage() {
               </Stack>
             </Grid>
             <Grid item xs={12} md={7}>
-              <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
+              <Box>
                 <img width="100%" height="auto" src={HomeCycle} />
               </Box>
             </Grid>
@@ -100,7 +104,7 @@ function HomePage() {
                     Book a ride
                   </Typography>
                   <Typography variant="body1">
-                    Locate the nearby Cycle-on stations and book your ride
+                    Locate the nearby Cycle-on stations and book your ride.
                   </Typography>
                 </Stack>
               </Grid>
@@ -112,7 +116,7 @@ function HomePage() {
                   </Typography>
                   <Typography variant="body1">
                     Add or withdraw money from your wallet. Easily pay for your
-                    rides through the Cycle-on
+                    rides through the Cycle-on.
                   </Typography>
                 </Stack>
               </Grid>

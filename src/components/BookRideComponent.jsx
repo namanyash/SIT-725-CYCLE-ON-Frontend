@@ -16,6 +16,8 @@ import {
 } from "@mui/material";
 import { putData } from "../../apiConfig";
 import PlacesAutocomplete from "./PlacesAutocomplete";
+import { useDispatch } from "react-redux";
+import { successAlert } from "../redux/slices/alertSlice";
 
 function BookRideComponent({
   open,
@@ -32,6 +34,7 @@ function BookRideComponent({
   const nBikes = stationData.bikes.length;
 
   const [directions, setDirections] = useState("");
+  const dispatch = useDispatch();
 
   useEffect(() => {
     if (originData && destinationData) {
@@ -60,6 +63,9 @@ function BookRideComponent({
       request,
       (response) => {
         handleClose("done");
+        dispatch(
+          successAlert({ msg: "You have successfully booked your ride." })
+        );
       },
       (error) => {
         console.log(error);
@@ -115,10 +121,10 @@ function BookRideComponent({
           {directions && (
             <Box>
               <Grid container justifyContent="space-between">
-                <Grid item xs={6}>
+                <Grid item xs="auto">
                   <Typography>Distance: {directions.distance.text}</Typography>
                 </Grid>
-                <Grid item xs={6}>
+                <Grid item xs="auto">
                   <Typography>Duration: {directions.duration.text}</Typography>
                 </Grid>
               </Grid>

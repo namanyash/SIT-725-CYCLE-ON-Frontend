@@ -11,7 +11,9 @@ import { BookRideComponent, CustomDialog } from "../components";
 import { useEffect } from "react";
 import { stringToLatLngObject, USER_REDUCER } from "../../utils";
 import { getData, putData } from "../../apiConfig";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { getUser } from "../redux/slices/userSlice";
+import { successAlert } from "../redux/slices/alertSlice";
 
 const libraries = ["places"];
 const END_RIDE = "End Ride";
@@ -33,6 +35,7 @@ function HomePage() {
   const [openDialog, setOpenDialog] = useState(false);
 
   const userData = useSelector((state) => state[USER_REDUCER]);
+  const dispatch = useDispatch();
 
   const center = useMemo(
     () => ({
@@ -83,8 +86,12 @@ function HomePage() {
       putData(
         request,
         (response) => {
+          dispatch(getUser());
           setIsBooked(false);
           setDirectionsResponse(null);
+          dispatch(
+            successAlert({ msg: "You have successfully ended your ride." })
+          );
         },
         (error) => {
           console.log(error);
@@ -112,6 +119,9 @@ function HomePage() {
   }, [isLoaded]);
 
   const handleStationClick = (event, station) => {
+    if (isBooked) {
+      return;
+    }
     setOpenStationModal(true);
     setCurrentStation(station);
   };
@@ -127,7 +137,7 @@ function HomePage() {
     if (isLoaded) {
       if (userData) {
         // Set active ride
-        if (userData.activeRide) {
+        if (userData?.activeRide && userData?.activeRide?.bikeId) {
           const { startLocationCoordinates, endLocationCoordinates } =
             userData.activeRide;
           calculateRoute(startLocationCoordinates, endLocationCoordinates);
@@ -167,13 +177,20 @@ function HomePage() {
                   <Marker
                     key={station._id}
                     position={stringToLatLngObject(station.coordinates)}
+                    clickable={isBooked ? false : true}
                     icon={{
                       path: "M 18.18 10 l -1.7 -4.68 C 16.19 4.53 15.44 4 14.6 4 H 12 v 2 h 2.6 l 1.46 4 h -4.81 l -0.36 -1 H 12 V 7 H 7 v 2 h 1.75 l 1.82 5 H 9.9 c -0.44 -2.23 -2.31 -3.88 -4.65 -3.99 C 2.45 9.87 0 12.2 0 15 c 0 2.8 2.2 5 5 5 c 2.46 0 4.45 -1.69 4.9 -4 h 4.2 c 0.44 2.23 2.31 3.88 4.65 3.99 c 2.8 0.13 5.25 -2.19 5.25 -5 c 0 -2.8 -2.2 -5 -5 -5 H 18.18 Z M 7.82 16 c -0.4 1.17 -1.49 2 -2.82 2 c -1.68 0 -3 -1.32 -3 -3 s 1.32 -3 3 -3 c 1.33 0 2.42 0.83 2.82 2 H 5 v 2 H 7.82 Z M 14.1 14 h -1.4 l -0.73 -2 H 15 C 14.56 12.58 14.24 13.25 14.1 14 Z M 19 18 c -1.68 0 -3 -1.32 -3 -3 c 0 -0.93 0.41 -1.73 1.05 -2.28 l 0.96 2.64 l 1.88 -0.68 l -0.97 -2.67 c 0.03 0 0.06 -0.01 0.09 -0.01 c 1.68 0 3 1.32 3 3 S 20.68 18 19 18 Z",
-                      fillColor: theme.palette.primary.main,
+                      fillColor:
+                        station?.bikes.length == 0
+                          ? theme.palette.grey[500]
+                          : theme.palette.primary.main,
                       fillOpacity: 0.6,
                       scale: 1.5,
                     }}
                     onClick={(e) => handleStationClick(e, station)}
+                    title={
+                      station?.bikes.length == 0 ? "No Bikes Available" : ""
+                    }
                   />
                 );
               })}
