@@ -10,7 +10,6 @@ import {
   Container,
   Avatar,
   Button,
-  Tooltip,
   MenuItem,
   Grid,
   useMediaQuery,
@@ -20,12 +19,13 @@ import MenuIcon from "@mui/icons-material/Menu";
 import { LogIn, SignUp } from "../pages";
 import {
   AUTH_REDUCER,
+  HOME_ROUTE,
   LANDING_ROUTE,
   LOGIN,
   LOGOUT,
+  NAVIGATE,
   PREV_RIDES,
   PREV_RIDES_ROUTE,
-  PROFILE,
   SIGN_UP,
   USER_REDUCER,
   WALLET,
@@ -38,9 +38,9 @@ import { isLoggedIn } from "../redux/slices/authSlice";
 
 import LOGO from "../assets/logo.png";
 
-const settings = [PROFILE, LOGOUT];
+const settings = [LOGOUT];
 const publicMenu = [SIGN_UP, LOGIN];
-const privateMenu = [PREV_RIDES, WALLET];
+const privateMenu = [NAVIGATE, PREV_RIDES, WALLET];
 
 const Header = () => {
   const [anchorElNav, setAnchorElNav] = useState(null);
@@ -74,6 +74,9 @@ const Header = () => {
         break;
       case WALLET:
         navigate(WALLET_ROUTE);
+        break;
+      case NAVIGATE:
+        navigate(HOME_ROUTE);
         break;
       default:
         break;
@@ -157,9 +160,10 @@ const Header = () => {
                   sx={{
                     width: 60,
                     height: 60,
-                    bgcolor: theme.palette.secondary.light,
+                    bgcolor: theme.palette.secondary.main,
                     "& .MuiAvatar-img": {
-                      height: "120%",
+                      objectFit: "contain",
+                      width: "90%",
                     },
                     cursor: "pointer",
                   }}
@@ -176,6 +180,12 @@ const Header = () => {
                   >
                     {isAuth ? (
                       <>
+                        <Button
+                          onClick={handleCloseNavMenu}
+                          sx={{ color: "white", display: "block" }}
+                        >
+                          {NAVIGATE}
+                        </Button>
                         <Button
                           onClick={handleCloseNavMenu}
                           sx={{ color: "white", display: "block" }}

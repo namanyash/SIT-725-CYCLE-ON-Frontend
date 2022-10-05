@@ -10,9 +10,11 @@ import {
   PREV_RIDES_ROUTE,
   WALLET_ROUTE,
 } from "../utils";
-import { Footer, Header, ProtectedRoutes } from "./components";
+import { Alerts, Footer, Header, Loader, ProtectedRoutes } from "./components";
 import { LandingPage, Wallet, HomePage, RideHistory } from "./pages";
+import { errorAlert } from "./redux/slices/alertSlice";
 import { isLoggedIn } from "./redux/slices/authSlice";
+import { setLoader } from "./redux/slices/loaderSlice";
 import { getUser } from "./redux/slices/userSlice";
 
 function App() {
@@ -23,10 +25,35 @@ function App() {
     function (config) {
       // Do something before request is sent
       config.headers["X-Auth-Token"] = localStorage.getItem("token");
+
+      dispatch(setLoader(true));
+
       return config;
     },
     function (error) {
       // Do something with request error
+      return Promise.reject(error);
+    }
+  );
+
+  axios.interceptors.response.use(
+    function (response) {
+      // Any status code that lie within the range of 2xx cause this function to trigger
+      // Do something with response data
+      dispatch(setLoader(false));
+
+      return response;
+    },
+    function (error) {
+      // Any status codes that falls outside the range of 2xx cause this function to trigger
+      // Do something with response error
+
+      if (error.response.status === 500)
+        dispatch(errorAlert({ msg: "Internal Server Error" }));
+      else dispatch(errorAlert({ msg: error.response.data.errors[0].msg }));
+
+      dispatch(setLoader(false));
+
       return Promise.reject(error);
     }
   );
@@ -53,18 +80,22 @@ function App() {
 
   return (
     isAuth !== null && (
-      <Router>
-        <Header />
-        <Routes>
-          <Route path={LANDING_ROUTE} element={<LandingPage />} />
-          <Route element={<ProtectedRoutes />}>
-            <Route path={WALLET_ROUTE} element={<Wallet />} />
-            <Route path={HOME_ROUTE} element={<HomePage />} />
-            <Route path={PREV_RIDES_ROUTE} element={<RideHistory />} />
-          </Route>
-        </Routes>
-        <Footer />
-      </Router>
+      <>
+        <Alerts />
+        <Loader />
+        <Router>
+          <Header />
+          <Routes>
+            <Route path={LANDING_ROUTE} element={<LandingPage />} />
+            <Route element={<ProtectedRoutes />}>
+              <Route path={WALLET_ROUTE} element={<Wallet />} />
+              <Route path={HOME_ROUTE} element={<HomePage />} />
+              <Route path={PREV_RIDES_ROUTE} element={<RideHistory />} />
+            </Route>
+          </Routes>
+          <Footer />
+        </Router>
+      </>
     )
   );
 }

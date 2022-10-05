@@ -14,12 +14,12 @@ import Link from "@mui/material/Link";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Container from "@mui/material/Container";
 import { ThemeProvider } from "@mui/material/styles";
-import InstantMessage from "../components/InstantMessage";
 import { getData, postData } from "../../apiConfig";
 import { isLoggedIn } from "../redux/slices/authSlice";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { HOME_ROUTE } from "../../utils";
+import { successAlert } from "../redux/slices/alertSlice";
 
 const style = {
   position: "absolute",
@@ -56,13 +56,9 @@ export default function LogIn({ handleClose }) {
     showPass: false,
   });
 
-  const [showAlert, setShowAlert] = useState(false); //Controls Alert
-  const [message, setMessage] = useState(""); //Controls Message
-  const [alertType, setAlertType] = useState(false); //Controls Message
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  console.log(showAlert);
   const handleSubmit = (event) => {
     event.preventDefault();
     const request = {
@@ -80,21 +76,13 @@ export default function LogIn({ handleClose }) {
         localStorage.setItem("token", response.data.token);
         dispatch(isLoggedIn(true));
         navigate(HOME_ROUTE);
-        setMessage("Welcome Back!");
-        setAlertType(true);
-        setShowAlert(true);
+        dispatch(successAlert({ msg: "Login Successful." }));
         handleClose();
       },
       (error) => {
-        if (error.response) {
-          console.log(error.response.data);
-          setMessage(error.response.data.errors[0].msg); //displays error message retrived from backend
-          setAlertType(false); //snackbox popup
-          setShowAlert(true);
-        }
+        console.log(error);
       }
     );
-    setShowAlert(false);
   };
 
   //pop up modal and form
@@ -135,11 +123,6 @@ export default function LogIn({ handleClose }) {
                   noValidate
                   sx={{ mt: 1 }}
                 >
-                  {showAlert ? (
-                    <InstantMessage type={alertType} message={message} />
-                  ) : (
-                    ``
-                  )}
                   <TextField
                     margin="normal"
                     required

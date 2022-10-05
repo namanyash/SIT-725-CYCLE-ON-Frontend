@@ -15,6 +15,11 @@ import TextField from "@mui/material/TextField";
 import { FormControl, FormHelperText } from "@mui/material";
 import { Container } from "@mui/system";
 import { postData } from "../../apiConfig";
+import { useDispatch } from "react-redux";
+import { isLoggedIn } from "../redux/slices/authSlice";
+import { successAlert } from "../redux/slices/alertSlice";
+import { HOME_ROUTE } from "../../utils";
+import { useNavigate } from "react-router-dom";
 
 const boxStyle = {
   position: "absolute",
@@ -73,6 +78,9 @@ export default function SignUp({ handleClose }) {
 
   const [errorConfirmPassword, setErrorConfirmPassword] = useState(false);
 
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
   function handleSubmit(e) {
     e.preventDefault();
 
@@ -98,6 +106,11 @@ export default function SignUp({ handleClose }) {
       request,
       (response) => {
         localStorage.setItem("token", response.data.token);
+        dispatch(isLoggedIn(true));
+        navigate(HOME_ROUTE);
+        dispatch(
+          successAlert({ msg: "Registration Successful. Welcome to Cycle On!" })
+        );
         handleClose();
       },
       (error) => {

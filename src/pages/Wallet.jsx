@@ -8,19 +8,17 @@ import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
-import { InstantMessage } from "../components";
 import { useDispatch, useSelector } from "react-redux";
 import { USER_REDUCER } from "../../utils";
 import { useEffect } from "react";
 import { putData } from "../../apiConfig";
 import { getUser } from "../redux/slices/userSlice";
+import { successAlert } from "../redux/slices/alertSlice";
+import Wallet from "../assets/wallet.svg";
 
 export default function WalletPage() {
   const [amount, setAmount] = React.useState(null);
-  const [message, setMessage] = React.useState({
-    value: "",
-    type: "",
-  });
+
   const [currentBalance, setCurrentBalance] = React.useState(null);
   const userData = useSelector((state) => state[USER_REDUCER]);
   const dispatch = useDispatch();
@@ -37,7 +35,6 @@ export default function WalletPage() {
   }
 
   const handleAmountChange = (event) => {
-    console.log(event.target.value);
     if (event.target.value.length <= 0) {
       return;
     }
@@ -48,201 +45,156 @@ export default function WalletPage() {
       event.target.value = "";
     }
   };
+
   const handlePurchase = (event) => {
-    if (amount <= 0) {
-      alert("Invalid Amount");
-      return;
-    }
     const request = {
       url: "/users/addBalance",
       payload: {
         valueToAdd: amount,
       },
-      headers: {
-        "x-api-token": "",
-      },
     };
     putData(
       request,
       (response) => {
-        setMessage({
-          value: "success",
-          type: true,
-        });
         dispatch(getUser());
+        dispatch(successAlert({ msg: "Wallet Updated Successfully." }));
       },
       (error) => {
         if (error.response) {
           console.log(error.response.data);
-          setMessage({
-            //todo
-            value: error.response.data,
-            type: false,
-          });
         }
       }
     );
   };
 
   return (
-    <Box
-      m={5}
-      pt={4}
-      display="flex"
-      flexDirection="column"
-      justifyContent="space-between"
-      alignItems="space-between"
-      minHeight="78vh"
-    >
-      <Grid
-        container
-        flexDirection="column"
-        alignItems="center"
-        justifyContent="center"
-      >
-        <Grid item xs={12} md={5}>
-          <Box mx={2}>
-            <Typography variant="h3" fontWeight={900}>
-              Top Up Your Wallet
-            </Typography>
-            <Typography variant="h6" fontWeight={400}>
-              Use the form below to add to your wallet, so you're ready to ride!
-            </Typography>
-          </Box>
-        </Grid>
-        <Box pb={3} pt={3} align="center">
-          <Card
-            sx={{
-              minWidth: 275,
-              marginTop: 8,
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-            }}
-          >
-            <CardContent>
-              <Typography variant="h6" component="div">
-                Current Balance
+    <Box p={4}>
+      <Grid container spacing={2} alignItems="center">
+        <Grid item xs={12} md={6}>
+          <Grid container spacing={2}>
+            <Grid item xs={12}>
+              <Typography variant="h3" fontWeight={900}>
+                Top Up Your Wallet
               </Typography>
-              <Typography
-                variant="body2"
-                sx={{ mb: 1.5 }}
-                color="text.secondary"
+            </Grid>
+            <Grid item xs={12}>
+              <Typography variant="h6" fontWeight={400}>
+                Use the form below to add to your wallet, so you're ready to
+                ride!
+              </Typography>
+            </Grid>
+            <Grid item xs={12}>
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "center",
+                }}
               >
-                Prices in AUD
-              </Typography>
-              <Typography variant="body10">${currentBalance}</Typography>
-            </CardContent>
-          </Card>
-        </Box>
-      </Grid>
-
-      <Grid container flexDirection="column" alignItems="center"></Grid>
-
-      <Grid container flexDirection="column" alignItems="center">
-        <Grid item xs={12} md={5}>
-          <Paper
-            sx={{
-              my: 1,
-            }}
-            elevation={0}
-            square
-          >
-            <React.Fragment>
+                <Card
+                  sx={{
+                    width: 275,
+                    my: 6,
+                    p: 3,
+                  }}
+                >
+                  <CardContent>
+                    <Typography variant="h6" component="div">
+                      Current Balance
+                    </Typography>
+                    <Typography
+                      variant="body2"
+                      sx={{ mb: 1.5 }}
+                      color="text.secondary"
+                    >
+                      Prices in AUD
+                    </Typography>
+                    <Typography variant="body10">
+                      <b>${currentBalance}</b>
+                    </Typography>
+                  </CardContent>
+                </Card>
+              </Box>
+            </Grid>
+            <Grid item xs={12}>
               <Typography variant="h6" gutterBottom>
                 Payment method
               </Typography>
-              <Grid container spacing={3}>
-                <Grid item xs={12} md={6}>
-                  <TextField
-                    required
-                    id="cardName"
-                    label="Name on card"
-                    fullWidth
-                    autoComplete="cc-name"
-                    variant="standard"
-                  />
-                </Grid>
-                <Grid item xs={12} md={6}>
-                  <TextField
-                    required
-                    id="cardNumber"
-                    label="Card number"
-                    fullWidth
-                    autoComplete="cc-number"
-                    variant="standard"
-                  />
-                </Grid>
-                <Grid item xs={12} md={6}>
-                  <TextField
-                    required
-                    id="expDate"
-                    label="Expiry date"
-                    fullWidth
-                    autoComplete="cc-exp"
-                    variant="standard"
-                  />
-                </Grid>
-                <Grid item xs={12} md={6}>
-                  <TextField
-                    required
-                    id="cvv"
-                    label="CVV"
-                    helperText="Last three digits on signature strip"
-                    fullWidth
-                    autoComplete="cc-csc"
-                    variant="standard"
-                  />
-                </Grid>
-              </Grid>
-            </React.Fragment>
-          </Paper>
+            </Grid>
+            <Grid item xs={12} md={6}>
+              <TextField
+                required
+                id="cardName"
+                label="Name on card"
+                fullWidth
+                autoComplete="cc-name"
+                variant="standard"
+              />
+            </Grid>
+            <Grid item xs={12} md={6}>
+              <TextField
+                required
+                id="cardNumber"
+                label="Card number"
+                fullWidth
+                autoComplete="cc-number"
+                variant="standard"
+              />
+            </Grid>
+            <Grid item xs={12} md={6}>
+              <TextField
+                required
+                id="expDate"
+                label="Expiry date"
+                fullWidth
+                autoComplete="cc-exp"
+                variant="standard"
+              />
+            </Grid>
+            <Grid item xs={12} md={6}>
+              <TextField
+                required
+                id="cvv"
+                label="CVV"
+                helperText="Last three digits on signature strip"
+                fullWidth
+                autoComplete="cc-csc"
+                variant="standard"
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <FormControl fullWidth variant="standard">
+                <InputLabel htmlFor="standard-adornment-amount">
+                  Amount
+                </InputLabel>
+                <Input
+                  id="standard-adornment-amount"
+                  onChange={handleAmountChange}
+                  startAdornment={
+                    <InputAdornment position="start">$</InputAdornment>
+                  }
+                />
+              </FormControl>
+            </Grid>
+            <Grid item xs={12}>
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "center",
+                }}
+              >
+                <Button variant="contained" onClick={handlePurchase}>
+                  Purchase!
+                </Button>
+              </Box>
+            </Grid>
+          </Grid>
         </Grid>
-      </Grid>
-
-      <Grid
-        container
-        flexDirection="row"
-        justifyContent="space-around"
-        alignItems="space-around"
-      >
-        <Grid item xs={12} md={5}>
-          <Box pb={5} pt={5}>
-            <Paper
-              sx={{
-                my: 1,
-              }}
-              elevation={0}
-              square
-            >
-              <React.Fragment>
-                <FormControl fullWidth sx={{ m: 1 }} variant="standard">
-                  <InputLabel htmlFor="standard-adornment-amount">
-                    Amount
-                  </InputLabel>
-                  <Input
-                    id="standard-adornment-amount"
-                    onChange={handleAmountChange}
-                    startAdornment={
-                      <InputAdornment position="start">$</InputAdornment>
-                    }
-                  />
-                </FormControl>
-              </React.Fragment>
-            </Paper>
-          </Box>
-        </Grid>
-        <Grid item xs={12} md={1}>
-          <Box pb={10} pt={10}>
-            <Button variant="contained" onClick={handlePurchase}>
-              Purchase!
-            </Button>
+        <Grid item xs={12} md={6}>
+          <Box>
+            <img width="100%" height="auto" src={Wallet} />
           </Box>
         </Grid>
       </Grid>
-      {message.value.length > 0 ? (
-        <InstantMessage type={message.type} message={message.value} />
-      ) : null}
     </Box>
   );
 }
