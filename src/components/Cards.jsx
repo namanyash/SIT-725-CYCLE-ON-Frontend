@@ -1,16 +1,8 @@
 import React, { useState, forwardRef } from "react";
-import Snackbar from "@mui/material/Snackbar";
-import MuiAlert from "@mui/material/Alert";
 import Box from "@mui/material/Box";
 import Card from "@mui/material/Card";
-import CardActions from "@mui/material/CardActions";
 import CardContent from "@mui/material/CardContent";
-import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import MoreVertIcon from "@mui/icons-material/MoreVert";
-import Collapse from "@mui/material/Collapse";
-import Avatar from "@mui/material/Avatar";
 import { Grid } from "@mui/material";
 import ArrowForwardTwoToneIcon from "@mui/icons-material/ArrowForwardTwoTone";
 
@@ -20,7 +12,7 @@ const Cards = (props) => {
   const endTimeString = new Date(endTime);
   return (
     <Box>
-      <Card variant="outlined" sx={{ margin: 2 }}>
+      <Card variant="outlined">
         <CardContent>
           <Grid container>
             <Grid item xs={1} />
