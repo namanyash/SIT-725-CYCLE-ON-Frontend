@@ -18,7 +18,7 @@ import Wallet from "../assets/wallet.svg";
 
 export default function WalletPage() {
   const [amount, setAmount] = React.useState(null);
-
+  
   const [currentBalance, setCurrentBalance] = React.useState(null);
   const userData = useSelector((state) => state[USER_REDUCER]);
   const dispatch = useDispatch();
@@ -28,12 +28,12 @@ export default function WalletPage() {
       setCurrentBalance(userData.balance.toFixed(2));
     }
   }, [userData]);
-
+  //check if string is entered
   function isNumeric(str) {
     if (typeof str != "string") return false;
     return !isNaN(str) && !isNaN(parseFloat(str));
   }
-
+  //validation checks
   const handleAmountChange = (event) => {
     if (event.target.value.length <= 0) {
       return;
@@ -45,7 +45,7 @@ export default function WalletPage() {
       event.target.value = "";
     }
   };
-
+  //updates the balance based on user input
   const handlePurchase = (event) => {
     const request = {
       url: "/users/addBalance",
@@ -66,7 +66,7 @@ export default function WalletPage() {
       }
     );
   };
-
+  //menu and field for user interaction
   return (
     <Box p={4}>
       <Grid container spacing={2} alignItems="center">

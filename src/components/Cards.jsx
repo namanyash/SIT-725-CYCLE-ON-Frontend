@@ -5,12 +5,12 @@ import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
 import { Grid } from "@mui/material";
 import ArrowForwardTwoToneIcon from "@mui/icons-material/ArrowForwardTwoTone";
-
+//component for the ridehistory page, to display information to the user
 const Cards = (props) => {
   const { startTime, endTime } = props;
   const startTimeString = new Date(startTime);
   const endTimeString = new Date(endTime);
-  return (
+  return ( 
     <Box>
       <Card variant="outlined">
         <CardContent>
